@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDU Trial Tracker - Actelis</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #e8f0f7 0%, #f5f8fb 100%);
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 1rem; }
+        
+        /* Header with Actelis colors */
+        .header { 
+            background: linear-gradient(135deg, #004170 0%, #0066a8 100%);
+            box-shadow: 0 2px 8px rgba(0, 65, 112, 0.2); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100;
+        }
+        .header-content { display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; }
+        .header-left { display: flex; align-items: center; gap: 1rem; }
+        .header-left img { height: 2.5rem; }
+        .header-left h1 { font-size: 1.5rem; font-weight: 600; color: white; letter-spacing: -0.5px; }
+        .header-right { display: flex; gap: 0.5rem; }
+        
+        /* Tabs */
+        .tabs { 
+            display: flex; 
+            gap: 0.5rem; 
+            background: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .tab { 
+            padding: 0.75rem 1.5rem; 
+            border: none; 
+            background: transparent;
+            cursor: pointer; 
+            font-weight: 500;
+            color: #666;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .tab:hover { color: #004170; background: #f0f7fc; }
+        .tab.active { color: white; background: linear-gradient(135deg, #004170 0%, #0066a8 100%); box-shadow: 0 2px 4px rgba(0, 65, 112, 0.2); }
+        
+        .btn { 
+            padding: 0.6rem 1.2rem; 
+            border-radius: 6px; 
+            font-weight: 500; 
+            border: none; 
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: white; color: #004170; font-weight: 600; }
+        .btn-primary:hover { background: #f0f7fc; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3); }
+        .btn-secondary { background: rgba(255,255,255,0.2); color: white; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.3); }
+        .btn-gray { background: #f3f4f6; color: #374151; }
+        .btn-gray:hover { background: #e5e7eb; }
+        
+        .main-content { padding: 1.5rem 0; }
+        .card { 
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            border: 1px solid #e0e7ef;
+        }
+        .card-header { 
+            padding: 1rem 1.5rem; 
+            border-bottom: 1px solid #e0e7ef; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            background: linear-gradient(to right, #f8fbfd 0%, #ffffff 100%);
+        }
+        .card-header h3 { font-size: 1.125rem; font-weight: 600; color: #004170; }
+        .card-body { padding: 1.5rem; }
+        
+        /* Executive Summary */
+        .executive-summary { 
+            background: linear-gradient(135deg, #004170 0%, #0066a8 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 65, 112, 0.25);
+        }
+        .executive-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; text-align: center; }
+        .executive-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        
+        /* Kanban Board */
+        .kanban-board { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .kanban-column { 
+            background: white;
+            border-radius: 8px; 
+            padding: 1rem; 
+            min-height: 300px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e7ef;
+        }
+        .kanban-header { 
+            font-weight: 600; 
+            font-size: 0.875rem; 
+            color: #004170; 
+            margin-bottom: 1rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #0066a8;
+        }
+        .kanban-count { 
+            background: linear-gradient(135deg, #004170 0%, #0066a8 100%);
+            color: white; 
+            padding: 0.25rem 0.75rem; 
+            border-radius: 12px; 
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .kanban-card { 
+            background: linear-gradient(to bottom, #f8fbfd 0%, #ffffff 100%);
+            border: 1px solid #cfd9e3;
+            border-radius: 6px; 
+            padding: 0.75rem; 
+            margin-bottom: 0.75rem; 
+            cursor: pointer; 
+            transition: all 0.2s;
+        }
+        .kanban-card:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 8px rgba(0, 102, 168, 0.15);
+            border-color: #0066a8;
+        }
+        .kanban-card-title { font-weight: 600; font-size: 0.875rem; color: #004170; margin-bottom: 0.5rem; }
+        .kanban-card-meta { font-size: 0.75rem; color: #6b7280; }
+        .kanban-card-days { font-size: 0.75rem; color: #0066a8; font-weight: 600; margin-top: 0.5rem; }
+        
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { 
+            background: white;
+            padding: 1.5rem; 
+            border-radius: 8px; 
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #0066a8;
+        }
+        .stat-value { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color: #004170; }
+        .stat-label { color: #6b7280; font-size: 0.875rem; font-weight: 500; }
+        
+        /* Charts */
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .chart-card { 
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e7ef;
+        }
+        .chart-title { font-size: 1rem; font-weight: 600; color: #004170; margin-bottom: 1rem; }
+        .chart-container { position: relative; height: 250px; display: flex; justify-content: center; align-items: center; }
+        
+        /* Bar Chart */
+        .bar-chart { display: flex; align-items: flex-end; justify-content: space-around; height: 200px; gap: 0.5rem; }
+        .bar-item { display: flex; flex-direction: column; align-items: center; flex: 1; }
+        .bar { 
+            width: 100%; 
+            background: linear-gradient(to top, #004170 0%, #0066a8 100%);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s;
+            min-height: 10px;
+        }
+        .bar:hover { background: linear-gradient(to top, #0066a8 0%, #4da3d9 100%); }
+        .bar-value { 
+            position: absolute; 
+            top: -1.5rem; 
+            left: 50%; 
+            transform: translateX(-50%);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #004170;
+        }
+        .bar-label { 
+            margin-top: 0.5rem; 
+            font-size: 0.75rem; 
+            color: #6b7280; 
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        /* Pie Chart */
+        .pie-legend { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem; }
+        .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; }
+        .legend-color { width: 1rem; height: 1rem; border-radius: 0.25rem; }
+        
+        /* Quick Actions */
+        .quick-actions { 
+            display: flex; 
+            gap: 0.5rem; 
+            flex-wrap: wrap; 
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e7ef;
+        }
+        .filter-group { display: flex; gap: 0.5rem; align-items: center; }
+        .filter-label { font-size: 0.875rem; color: #004170; font-weight: 600; }
+        
+        /* Customer Dashboard */
+        .customer-select { 
+            padding: 0.75rem; 
+            border: 2px solid #0066a8; 
+            border-radius: 6px; 
+            font-size: 1rem; 
+            margin-bottom: 1.5rem; 
+            width: 100%; 
+            max-width: 400px;
+            background: white;
+        }
+        .customer-select:focus { outline: none; border-color: #004170; box-shadow: 0 0 0 3px rgba(0, 102, 168, 0.1); }
+        .customer-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: start; 
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e7ef;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .customer-info h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; color: #004170; }
+        .customer-meta { display: flex; gap: 1rem; font-size: 0.875rem; color: #6b7280; }
+        
+        /* Timeline */
+        .timeline { position: relative; padding-left: 2rem; margin-bottom: 2rem; }
+        .timeline::before { content: ''; position: absolute; left: 0.5rem; top: 0; bottom: 0; width: 3px; background: linear-gradient(to bottom, #004170 0%, #0066a8 100%); }
+        .timeline-item { position: relative; padding-bottom: 2rem; }
+        .timeline-dot { position: absolute; left: -1.5rem; width: 1rem; height: 1rem; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px; }
+        .timeline-dot.completed { background: #28a745; box-shadow: 0 0 0 2px #28a745; }
+        .timeline-dot.active { background: #0066a8; box-shadow: 0 0 0 2px #0066a8; animation: pulse 2s infinite; }
+        .timeline-dot.pending { background: #e5e7eb; box-shadow: 0 0 0 2px #e5e7eb; }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 2px #0066a8; }
+            50% { box-shadow: 0 0 0 6px rgba(0, 102, 168, 0.3); }
+        }
+        .timeline-content { margin-left: 1rem; }
+        .timeline-title { font-weight: 600; margin-bottom: 0.25rem; color: #004170; }
+        .timeline-dates { font-size: 0.875rem; color: #6b7280; }
+        .timeline-duration { font-size: 0.75rem; color: #0066a8; font-weight: 600; margin-top: 0.25rem; }
+        
+        /* Equipment Grid */
+        .equipment-section { margin-bottom: 2rem; }
+        .equipment-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+        .equipment-item { 
+            text-align: center; 
+            padding: 1rem; 
+            background: linear-gradient(to bottom, #f8fbfd 0%, #ffffff 100%);
+            border-radius: 6px;
+            border: 1px solid #cfd9e3;
+        }
+        .equipment-qty { font-size: 1.5rem; font-weight: 700; color: #004170; }
+        .equipment-name { font-size: 0.875rem; color: #374151; font-weight: 600; margin-top: 0.25rem; }
+        .equipment-code { font-size: 0.75rem; color: #6b7280; }
+        
+        /* Contact Cards */
+        .contacts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .contact-card { 
+            padding: 1.25rem; 
+            background: white;
+            border: 1px solid #e0e7ef;
+            border-radius: 6px;
+            border-left: 4px solid #0066a8;
+        }
+        .contact-title { font-weight: 600; color: #004170; margin-bottom: 0.75rem; font-size: 1rem; }
+        .contact-info { font-size: 0.875rem; }
+        .contact-info div { margin-bottom: 0.5rem; }
+        .contact-label { color: #6b7280; font-size: 0.75rem; font-weight: 600; }
+        
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: linear-gradient(to right, #f8fbfd 0%, #ffffff 100%); }
+        th { padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #004170; text-transform: uppercase; border-bottom: 2px solid #0066a8; }
+        td { padding: 0.75rem 1rem; border-top: 1px solid #e5e7eb; font-size: 0.875rem; }
+        tr:hover { background: #f8fbfd; }
+        
+        .badge { 
+            display: inline-block; 
+            padding: 0.25rem 0.75rem; 
+            font-size: 0.75rem; 
+            border-radius: 12px; 
+            font-weight: 600;
+        }
+        .badge-green { background: #d1fae5; color: #065f46; }
+        .badge-blue { background: #dbeafe; color: #004170; }
+        .badge-orange { background: #fed7aa; color: #9a3412; }
+        .badge-purple { background: #e9d5ff; color: #6b21a8; }
+        .badge-gray { background: #f3f4f6; color: #374151; }
+        .badge-red { background: #fee2e2; color: #991b1b; }
+        
+        .form-grid { display: grid; gap: 1rem; }
+        .form-grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .form-grid-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        .form-grid-4 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; font-size: 0.875rem; font-weight: 600; color: #004170; margin-bottom: 0.25rem; }
+        .form-label-small { display: block; font-size: 0.75rem; color: #6b7280; font-weight: 400; }
+        .form-control { 
+            width: 100%; 
+            padding: 0.6rem 0.75rem; 
+            border: 2px solid #cfd9e3; 
+            border-radius: 6px; 
+            font-size: 0.875rem;
+        }
+        .form-control:focus { outline: none; border-color: #0066a8; box-shadow: 0 0 0 3px rgba(0, 102, 168, 0.1); }
+        textarea.form-control { resize: vertical; }
+        .section { margin-bottom: 2rem; }
+        .section-title { font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: #004170; }
+        .subsection { 
+            border: 2px solid #e0e7ef; 
+            border-radius: 6px; 
+            padding: 1rem; 
+            margin-bottom: 1rem;
+            background: linear-gradient(to bottom, #f8fbfd 0%, #ffffff 100%);
+        }
+        .subsection-title { font-weight: 600; margin-bottom: 0.75rem; color: #004170; }
+        
+        .search-box { 
+            padding: 0.6rem 1rem; 
+            border: 2px solid #0066a8; 
+            border-radius: 6px; 
+            font-size: 0.875rem;
+            width: 300px;
+        }
+        .search-box:focus { outline: none; border-color: #004170; box-shadow: 0 0 0 3px rgba(0, 102, 168, 0.1); }
+        
+        .empty-state { text-align: center; padding: 3rem; color: #6b7280; }
+        .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+        
+        @media (max-width: 768px) {
+            .kanban-board { grid-template-columns: 1fr; }
+            .header-content { flex-direction: column; gap: 1rem; }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script>
+        const { useState, useEffect, useRef, createElement: h } = React;
+
+        const INITIAL_DATA = [
+          {
+            id: 1,
+            customerName: "Metro Housing Solutions",
+            productType: "GL9000",
+            projectType: "Hybrid",
+            quantities: {
+              "GL916": 12, "GL916-R": 8, "GL908": 0, "GL908-R": 0, "GL904": 4, "GL904-R": 4,
+              "GL910C/GL9110C": 6, "GL901CS": 10, "GL91": 20, "GL91-RB": 15, "GL92": 0,
+              "GL92-R": 0, "GL93C": 8, "GL93C-WiFi": 12
+            },
+            status: "Deployed",
+            shippingDate: "2024-08-15",
+            shippingAddress: "123 Main St, New York, NY 10001",
+            trackingAWB: "1Z999AA10123456784",
+            nextSteps: "Schedule follow-up meeting to discuss phase 2 expansion",
+            notes: "Project completed successfully. Customer very satisfied with performance.",
+            nextSteps: "Schedule follow-up for phase 2 expansion discussion.",
+            statusDates: {
+              "Customer Engaged": { start: "2024-07-01", end: "2024-07-15" },
+              "Customer Trial/Test": { start: "2024-07-16", end: "2024-08-10" },
+              "FOA": { start: "2024-08-11", end: "2024-08-14" },
+              "Installation in process": { start: "2024-08-16", end: "2024-09-20" },
+              "Deployed": { start: "2024-09-21", end: null }
+            },
+            technicalContact: { name: "John Smith", phone: "+1-555-0101", email: "john.smith@metro.com" },
+            adminContact: { name: "Sarah Johnson", phone: "+1-555-0102", email: "sarah.j@metro.com" },
+            salesContact: { name: "Mike Anderson", phone: "+1-555-0201", email: "mike.a@actelis.com" }
+          },
+          {
+            id: 2,
+            customerName: "Urban Connect Networks",
+            productType: "GL900",
+            projectType: "Coax",
+            quantities: {
+              "GL916": 8, "GL916-R": 6, "GL908": 4, "GL908-R": 4, "GL904": 0, "GL904-R": 0,
+              "GL910C/GL9110C": 8, "GL901CS": 16, "GL91": 12, "GL91-RB": 0, "GL92": 8,
+              "GL92-R": 6, "GL93C": 0, "GL93C-WiFi": 10
+            },
+            status: "Installation in process",
+            shippingDate: "2024-09-20",
+            shippingAddress: "456 Tech Blvd, San Francisco, CA 94105",
+            trackingAWB: "1Z999AA10123456790",
+            nextSteps: "Complete installation by end of week, schedule customer training",
+            notes: "Installation team reports excellent signal quality. Expected completion next week.",
+            nextSteps: "Complete final building installation. Schedule customer training session.",
+            statusDates: {
+              "Customer Engaged": { start: "2024-08-10", end: "2024-08-25" },
+              "Customer Trial/Test": { start: "2024-08-26", end: "2024-09-15" },
+              "FOA": { start: "2024-09-16", end: "2024-09-19" },
+              "Installation in process": { start: "2024-09-21", end: null },
+              "Deployed": { start: null, end: null }
+            },
+            technicalContact: { name: "Emily Chen", phone: "+1-555-0103", email: "emily.c@urbanconnect.com" },
+            adminContact: { name: "Robert Lee", phone: "+1-555-0104", email: "robert.l@urbanconnect.com" },
+            salesContact: { name: "Lisa Martinez", phone: "+1-555-0202", email: "lisa.m@actelis.com" }
+          },
+          {
+            id: 3,
+            customerName: "CityWide Broadband",
+            productType: "GL900 and GL9000",
+            projectType: "Cooper",
+            quantities: {
+              "GL916": 15, "GL916-R": 12, "GL908": 6, "GL908-R": 6, "GL904": 8, "GL904-R": 8,
+              "GL910C/GL9110C": 10, "GL901CS": 0, "GL91": 25, "GL91-RB": 20, "GL92": 10,
+              "GL92-R": 8, "GL93C": 12, "GL93C-WiFi": 18
+            },
+            status: "Customer Trial/Test",
+            shippingDate: "2024-10-05",
+            shippingAddress: "789 Network Ave, Chicago, IL 60601",
+            trackingAWB: "1Z999AA10123456801",
+            nextSteps: "Present trial results to management team next Tuesday",
+            notes: "Customer testing phase going well. Requesting additional demo for management team.",
+            nextSteps: "Arrange executive demo presentation. Provide ROI analysis document.",
+            statusDates: {
+              "Customer Engaged": { start: "2024-09-15", end: "2024-09-30" },
+              "Customer Trial/Test": { start: "2024-10-01", end: null },
+              "FOA": { start: null, end: null },
+              "Installation in process": { start: null, end: null },
+              "Deployed": { start: null, end: null }
+            },
+            technicalContact: { name: "David Park", phone: "+1-555-0105", email: "david.p@citywide.com" },
+            adminContact: { name: "Michelle Wong", phone: "+1-555-0106", email: "michelle.w@citywide.com" },
+            salesContact: { name: "Tom Bradley", phone: "+1-555-0203", email: "tom.b@actelis.com" }
+          },
+          {
+            id: 4,
+            customerName: "Summit Residential Networks",
+            productType: "GL9000",
+            projectType: "Hybrid",
+            quantities: {
+              "GL916": 10, "GL916-R": 10, "GL908": 0, "GL908-R": 0, "GL904": 5, "GL904-R": 5,
+              "GL910C/GL9110C": 8, "GL901CS": 12, "GL91": 18, "GL91-RB": 16, "GL92": 0,
+              "GL92-R": 0, "GL93C": 10, "GL93C-WiFi": 15
+            },
+            status: "FOA",
+            shippingDate: "2024-10-25",
+            shippingAddress: "321 Summit Dr, Austin, TX 78701",
+            trackingAWB: "1Z999AA10123456812",
+            notes: "FOA paperwork in review. Awaiting final signatures from legal department.",
+            nextSteps: "Follow up with legal team. Prepare installation schedule.",
+            statusDates: {
+              "Customer Engaged": { start: "2024-09-20", end: "2024-10-10" },
+              "Customer Trial/Test": { start: "2024-10-11", end: "2024-10-23" },
+              "FOA": { start: "2024-10-24", end: null },
+              "Installation in process": { start: null, end: null },
+              "Deployed": { start: null, end: null }
+            },
+            technicalContact: { name: "Amanda Foster", phone: "+1-555-0107", email: "amanda.f@summit.com" },
+            adminContact: { name: "Kevin Brown", phone: "+1-555-0108", email: "kevin.b@summit.com" },
+            salesContact: { name: "Jennifer Lopez", phone: "+1-555-0204", email: "jennifer.l@actelis.com" }
+          },
+          {
+            id: 5,
+            customerName: "TechTower Solutions",
+            productType: "GL900",
+            projectType: "Coax",
+            quantities: {
+              "GL916": 6, "GL916-R": 4, "GL908": 3, "GL908-R": 3, "GL904": 0, "GL904-R": 0,
+              "GL910C/GL9110C": 5, "GL901CS": 14, "GL91": 10, "GL91-RB": 0, "GL92": 6,
+              "GL92-R": 4, "GL93C": 0, "GL93C-WiFi": 8
+            },
+            status: "Customer Engaged",
+            shippingDate: null,
+            shippingAddress: "555 Tower Rd, Seattle, WA 98101",
+            trackingAWB: null,
+            notes: "Initial discussions positive. Waiting on budget approval for Q1.",
+            nextSteps: "Send proposal for Q1 budget cycle. Schedule CFO meeting.",
+            statusDates: {
+              "Customer Engaged": { start: "2024-11-01", end: null },
+              "Customer Trial/Test": { start: null, end: null },
+              "FOA": { start: null, end: null },
+              "Installation in process": { start: null, end: null },
+              "Deployed": { start: null, end: null }
+            },
+            technicalContact: { name: "Brian Wilson", phone: "+1-555-0109", email: "brian.w@techtower.com" },
+            adminContact: { name: "Patricia Davis", phone: "+1-555-0110", email: "patricia.d@techtower.com" },
+            salesContact: { name: "Steve Rogers", phone: "+1-555-0205", email: "steve.r@actelis.com" }
+          },
+          {
+            id: 6,
+            customerName: "Coastal Communications",
+            productType: "GL900 and GL9000",
+            projectType: "Hybrid",
+            quantities: {
+              "GL916": 14, "GL916-R": 10, "GL908": 5, "GL908-R": 5, "GL904": 6, "GL904-R": 6,
+              "GL910C/GL9110C": 9, "GL901CS": 11, "GL91": 22, "GL91-RB": 18, "GL92": 8,
+              "GL92-R": 7, "GL93C": 11, "GL93C-WiFi": 16
+            },
+            status: "Deployed",
+            shippingDate: "2024-07-20",
+            shippingAddress: "888 Beach Blvd, Miami, FL 33139",
+            trackingAWB: "1Z999AA10123456823",
+            notes: "Excellent deployment. Customer has requested quote for phase 2 expansion.",
+            nextSteps: "Prepare phase 2 proposal. Schedule quarterly review meeting.",
+            statusDates: {
+              "Customer Engaged": { start: "2024-06-01", end: "2024-06-20" },
+              "Customer Trial/Test": { start: "2024-06-21", end: "2024-07-15" },
+              "FOA": { start: "2024-07-16", end: "2024-07-19" },
+              "Installation in process": { start: "2024-07-21", end: "2024-08-25" },
+              "Deployed": { start: "2024-08-26", end: null }
+            },
+            technicalContact: { name: "Carlos Rodriguez", phone: "+1-555-0111", email: "carlos.r@coastal.com" },
+            adminContact: { name: "Linda Martinez", phone: "+1-555-0112", email: "linda.m@coastal.com" },
+            salesContact: { name: "Nancy White", phone: "+1-555-0206", email: "nancy.w@actelis.com" }
+          },
+          {
+            id: 7,
+            customerName: "Skyline Network Services",
+            productType: "GL9000",
+            projectType: "Cooper",
+            quantities: {
+              "GL916": 11, "GL916-R": 9, "GL908": 0, "GL908-R": 0, "GL904": 7, "GL904-R": 7,
+              "GL910C/GL9110C": 7, "GL901CS": 0, "GL91": 16, "GL91-RB": 14, "GL92": 9,
+              "GL92-R": 8, "GL93C": 9, "GL93C-WiFi": 13
+            },
+            status: "Installation in process",
+            shippingDate: "2024-10-10",
+            shippingAddress: "999 Skyline Dr, Denver, CO 80202",
+            trackingAWB: "1Z999AA10123456834",
+            notes: "On schedule. Installation team working on final building. Minor cable routing issue resolved.",
+            nextSteps: "Complete final building by Friday. Schedule acceptance testing.",
+            statusDates: {
+              "Customer Engaged": { start: "2024-09-01", end: "2024-09-18" },
+              "Customer Trial/Test": { start: "2024-09-19", end: "2024-10-05" },
+              "FOA": { start: "2024-10-06", end: "2024-10-09" },
+              "Installation in process": { start: "2024-10-11", end: null },
+              "Deployed": { start: null, end: null }
+            },
+            technicalContact: { name: "Rachel Green", phone: "+1-555-0113", email: "rachel.g@skyline.com" },
+            adminContact: { name: "Mark Taylor", phone: "+1-555-0114", email: "mark.t@skyline.com" },
+            salesContact: { name: "Chris Evans", phone: "+1-555-0207", email: "chris.e@actelis.com" }
+          }
+        ];
+
+        const STATUS_OPTIONS = [
+          "Customer Engaged",
+          "Customer Trial/Test",
+          "FOA",
+          "Installation in process",
+          "Deployed",
+          "Turned Down"
+        ];
+
+        const PRODUCT_TYPES = ["GL900", "GL9000", "GL900 and GL9000"];
+        const PROJECT_TYPES = ["Coax", "Cooper", "Hybrid"];
+
+        const PTMP_MODELS = [
+          { name: "GL916", code: "501RG0302" },
+          { name: "GL916-R", code: "501RG0300" },
+          { name: "GL908", code: "501RG0303" },
+          { name: "GL908-R", code: "501RG0301" },
+          { name: "GL904", code: "501RG0167" },
+          { name: "GL904-R", code: "501RG0168" },
+          { name: "GL910C/GL9110C", code: "506R61334" },
+          { name: "GL901CS", code: "506R61335" }
+        ];
+
+        const REMOTE_MODELS = [
+          { name: "GL91", code: "506R61245" },
+          { name: "GL91-RB", code: "506R61247" },
+          { name: "GL92", code: "501RG0157" },
+          { name: "GL92-R", code: "501RG0158" },
+          { name: "GL93C", code: "506R61337" },
+          { name: "GL93C-WiFi", code: "506R61336" }
+        ];
+
+        // Pie Chart Component
+        function PieChart({ data }) {
+          const canvasRef = useRef(null);
+
+          useEffect(() => {
+            if (!canvasRef.current) return;
+            
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY) - 10;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const total = data.reduce((sum, item) => sum + item.value, 0);
+            let currentAngle = -Math.PI / 2;
+
+            const colors = ['#0066a8', '#28a745', '#ffc107', '#dc3545', '#6f42c1'];
+
+            data.forEach((item, index) => {
+              const sliceAngle = (item.value / total) * 2 * Math.PI;
+              
+              ctx.beginPath();
+              ctx.moveTo(centerX, centerY);
+              ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+              ctx.closePath();
+              ctx.fillStyle = colors[index % colors.length];
+              ctx.fill();
+              ctx.strokeStyle = 'white';
+              ctx.lineWidth = 2;
+              ctx.stroke();
+
+              currentAngle += sliceAngle;
+            });
+          }, [data]);
+
+          const colors = ['#0066a8', '#28a745', '#ffc107', '#dc3545', '#6f42c1'];
+
+          return h('div', null,
+            h('canvas', { ref: canvasRef, width: 200, height: 200 }),
+            h('div', { className: 'pie-legend' },
+              data.map((item, index) =>
+                h('div', { key: index, className: 'legend-item' },
+                  h('div', { 
+                    className: 'legend-color',
+                    style: { backgroundColor: colors[index % colors.length] }
+                  }),
+                  h('span', null, `${item.name}: ${item.value}`)
+                )
+              )
+            )
+          );
+        }
+
+        function MDUTrialTracker() {
+          const [projects, setProjects] = useState([]);
+          const [view, setView] = useState('overview');
+          const [editingProject, setEditingProject] = useState(null);
+          const [formData, setFormData] = useState(null);
+          const [selectedCustomer, setSelectedCustomer] = useState(null);
+          const [searchTerm, setSearchTerm] = useState('');
+          const [filterProduct, setFilterProduct] = useState('All');
+          const [filterProjectType, setFilterProjectType] = useState('All');
+
+          useEffect(() => {
+            const saved = localStorage.getItem('mduProjects');
+            if (saved) {
+              setProjects(JSON.parse(saved));
+            } else {
+              setProjects(INITIAL_DATA);
+              localStorage.setItem('mduProjects', JSON.stringify(INITIAL_DATA));
+            }
+          }, []);
+
+          const saveProjects = (newProjects) => {
+            setProjects(newProjects);
+            localStorage.setItem('mduProjects', JSON.stringify(newProjects));
+          };
+
+          const calculateDaysByStatus = (project) => {
+            const days = {};
+            STATUS_OPTIONS.forEach(status => {
+              const dates = project.statusDates[status];
+              if (dates && dates.start) {
+                const start = new Date(dates.start);
+                const end = dates.end ? new Date(dates.end) : new Date();
+                days[status] = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+              } else {
+                days[status] = 0;
+              }
+            });
+            return days;
+          };
+
+          const downloadHTMLWithData = async () => {
+            try {
+              // Fetch the original HTML source
+              const response = await fetch(window.location.href);
+              const htmlContent = await response.text();
+              
+              // Convert projects to a JavaScript string with proper formatting
+              const projectsJSON = JSON.stringify(projects, null, 10);
+              
+              // Find and replace the INITIAL_DATA array
+              // Look for the pattern: const INITIAL_DATA = [ ... ];
+              const regex = /const INITIAL_DATA = \[[\s\S]*?\n        \];/;
+              
+              if (!regex.test(htmlContent)) {
+                alert('Error: Could not find INITIAL_DATA in the HTML file');
+                return;
+              }
+              
+              const newHTML = htmlContent.replace(regex, `const INITIAL_DATA = ${projectsJSON};`);
+              
+              // Create and download the file
+              const blob = new Blob([newHTML], { type: 'text/html;charset=utf-8' });
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `mdu-tracker-${new Date().toISOString().split('T')[0]}.html`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              window.URL.revokeObjectURL(url);
+              
+              alert('✅ HTML file downloaded with current data embedded!\n\nShare this file with colleagues - they will see all your updates.\n\nThe file has full editing functionality preserved.');
+            } catch (error) {
+              console.error('Download error:', error);
+              // Fallback: Show alert about using CSV export instead
+              if (confirm('Cannot download HTML directly (file may be opened locally).\n\nWould you like to export to CSV instead?\n\nYour colleagues can then import the CSV file.')) {
+                exportToCSV();
+              }
+            }
+          };
+
+          const exportToCSV = () => {
+            const headers = [
+              'ID', 'Customer Name', 'Product Type', 'Project Type', 'Status',
+              'Shipping Date', 'Shipping Address', 'Tracking AWB', 'Next Steps', 'Notes',
+              ...PTMP_MODELS.map(m => `${m.name} (${m.code})`),
+              ...REMOTE_MODELS.map(m => `${m.name} (${m.code})`),
+              ...STATUS_OPTIONS.flatMap(s => [`${s} Start`, `${s} End`]),
+              'Tech Contact Name', 'Tech Contact Phone', 'Tech Contact Email',
+              'Admin Contact Name', 'Admin Contact Phone', 'Admin Contact Email',
+              'Sales Contact Name', 'Sales Contact Phone', 'Sales Contact Email'
+            ];
+
+            const rows = projects.map(p => [
+              p.id,
+              p.customerName,
+              p.productType,
+              p.projectType,
+              p.status,
+              p.shippingDate || '',
+              p.shippingAddress || '',
+              p.trackingAWB || '',
+              p.nextSteps || '',
+              p.notes || '',
+              ...PTMP_MODELS.map(m => p.quantities[m.name] || 0),
+              ...REMOTE_MODELS.map(m => p.quantities[m.name] || 0),
+              ...STATUS_OPTIONS.flatMap(s => [
+                p.statusDates[s]?.start || '',
+                p.statusDates[s]?.end || ''
+              ]),
+              p.technicalContact.name,
+              p.technicalContact.phone,
+              p.technicalContact.email,
+              p.adminContact.name,
+              p.adminContact.phone,
+              p.adminContact.email,
+              p.salesContact.name,
+              p.salesContact.phone,
+              p.salesContact.email
+            ]);
+
+            const csv = [headers, ...rows].map(row => 
+              row.map(cell => `"${cell}"`).join(',')
+            ).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mdu-trials-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+          };
+
+          const importFromCSV = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              try {
+                const text = e.target.result;
+                const lines = text.split('\n').filter(line => line.trim());
+                
+                if (lines.length < 2) {
+                  alert('CSV file appears to be empty');
+                  return;
+                }
+
+                const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+                const newProjects = [];
+
+                for (let i = 1; i < lines.length; i++) {
+                  const values = [];
+                  let currentValue = '';
+                  let insideQuotes = false;
+
+                  for (let char of lines[i]) {
+                    if (char === '"') {
+                      insideQuotes = !insideQuotes;
+                    } else if (char === ',' && !insideQuotes) {
+                      values.push(currentValue.trim());
+                      currentValue = '';
+                    } else {
+                      currentValue += char;
+                    }
+                  }
+                  values.push(currentValue.trim());
+
+                  if (values.length < 10) continue;
+
+                  const quantities = {};
+                  let col = 9;
+                  [...PTMP_MODELS, ...REMOTE_MODELS].forEach(model => {
+                    quantities[model.name] = parseInt(values[col] || 0);
+                    col++;
+                  });
+
+                  const statusDates = {};
+                  STATUS_OPTIONS.forEach(status => {
+                    statusDates[status] = {
+                      start: values[col] || null,
+                      end: values[col + 1] || null
+                    };
+                    col += 2;
+                  });
+
+                  newProjects.push({
+                    id: parseInt(values[0]) || newProjects.length + 1,
+                    customerName: values[1] || '',
+                    productType: values[2] || PRODUCT_TYPES[0],
+                    projectType: values[3] || PROJECT_TYPES[0],
+                    status: values[4] || STATUS_OPTIONS[0],
+                    shippingDate: values[5] || null,
+                    shippingAddress: values[6] || '',
+                    trackingAWB: values[7] || '',
+                    nextSteps: values[8] || '',
+                    notes: values[9] || '',
+                    quantities: quantities,
+                    statusDates: statusDates,
+                    technicalContact: {
+                      name: values[col] || '',
+                      phone: values[col + 1] || '',
+                      email: values[col + 2] || ''
+                    },
+                    adminContact: {
+                      name: values[col + 3] || '',
+                      phone: values[col + 4] || '',
+                      email: values[col + 5] || ''
+                    },
+                    salesContact: {
+                      name: values[col + 6] || '',
+                      phone: values[col + 7] || '',
+                      email: values[col + 8] || ''
+                    }
+                  });
+                }
+
+                if (newProjects.length > 0) {
+                  if (confirm(`Found ${newProjects.length} projects in CSV. This will REPLACE all existing data. Continue?`)) {
+                    saveProjects(newProjects);
+                    setView('overview');
+                    alert(`✅ Successfully imported ${newProjects.length} projects!`);
+                  }
+                } else {
+                  alert('No valid projects found in CSV file');
+                }
+              } catch (error) {
+                alert('Error parsing CSV file: ' + error.message);
+                console.error(error);
+              }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+          };
+
+          const initNewProject = () => {
+            const newId = Math.max(...projects.map(p => p.id), 0) + 1;
+            const emptyQuantities = {};
+            [...PTMP_MODELS, ...REMOTE_MODELS].forEach(model => {
+              emptyQuantities[model.name] = 0;
+            });
+            
+            const emptyStatusDates = {};
+            STATUS_OPTIONS.forEach(status => {
+              emptyStatusDates[status] = { start: null, end: null };
+            });
+
+            setFormData({
+              id: newId,
+              customerName: '',
+              productType: PRODUCT_TYPES[0],
+              projectType: PROJECT_TYPES[0],
+              quantities: emptyQuantities,
+              status: STATUS_OPTIONS[0],
+              shippingDate: '',
+              shippingAddress: '',
+              trackingAWB: '',
+              nextSteps: '',
+              notes: '',
+              statusDates: emptyStatusDates,
+              technicalContact: { name: '', phone: '', email: '' },
+              adminContact: { name: '', phone: '', email: '' },
+              salesContact: { name: '', phone: '', email: '' }
+            });
+            setEditingProject(newId);
+            setView('form');
+          };
+
+          const editProject = (project) => {
+            setFormData(JSON.parse(JSON.stringify(project)));
+            setEditingProject(project.id);
+            setView('form');
+          };
+
+          const saveProject = () => {
+            if (!formData.customerName) {
+              alert('Customer name is required');
+              return;
+            }
+
+            const existingIndex = projects.findIndex(p => p.id === formData.id);
+            let newProjects;
+            
+            if (existingIndex >= 0) {
+              newProjects = [...projects];
+              newProjects[existingIndex] = formData;
+            } else {
+              newProjects = [...projects, formData];
+            }
+
+            saveProjects(newProjects);
+            setView('overview');
+            setEditingProject(null);
+            setFormData(null);
+          };
+
+          const cancelEdit = () => {
+            setView('overview');
+            setEditingProject(null);
+            setFormData(null);
+          };
+
+          const deleteProject = (projectId) => {
+            if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+              const newProjects = projects.filter(p => p.id !== projectId);
+              saveProjects(newProjects);
+              if (selectedCustomer === projectId) {
+                setSelectedCustomer(null);
+              }
+            }
+          };
+
+          const resetDatabase = () => {
+            if (confirm('⚠️ WARNING: This will delete ALL projects and reset to the initial sample data. This action cannot be undone. Are you sure?')) {
+              if (confirm('Really sure? All your data will be lost!')) {
+                setProjects(INITIAL_DATA);
+                localStorage.setItem('mduProjects', JSON.stringify(INITIAL_DATA));
+                setView('overview');
+                setEditingProject(null);
+                setFormData(null);
+                setSelectedCustomer(null);
+                alert('✅ Database has been reset to initial sample data.');
+              }
+            }
+          };
+
+          const updateFormField = (field, value) => {
+            setFormData({ ...formData, [field]: value });
+          };
+
+          const updateQuantity = (model, value) => {
+            setFormData({
+              ...formData,
+              quantities: { ...formData.quantities, [model]: parseInt(value) || 0 }
+            });
+          };
+
+          const updateContact = (type, field, value) => {
+            setFormData({
+              ...formData,
+              [type]: { ...formData[type], [field]: value }
+            });
+          };
+
+          const updateStatusDate = (status, type, value) => {
+            setFormData({
+              ...formData,
+              statusDates: {
+                ...formData.statusDates,
+                [status]: { ...formData.statusDates[status], [type]: value }
+              }
+            });
+          };
+
+          const getFilteredProjects = () => {
+            return projects.filter(p => {
+              const matchesSearch = p.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                  p.salesContact.name.toLowerCase().includes(searchTerm.toLowerCase());
+              const matchesProduct = filterProduct === 'All' || p.productType === filterProduct;
+              const matchesProjectType = filterProjectType === 'All' || p.projectType === filterProjectType;
+              return matchesSearch && matchesProduct && matchesProjectType;
+            });
+          };
+
+          const getTotalEquipment = () => {
+            return projects.reduce((total, project) => {
+              return total + Object.values(project.quantities).reduce((sum, qty) => sum + qty, 0);
+            }, 0);
+          };
+
+          const getAverageCycleTime = () => {
+            const deployed = projects.filter(p => p.status === 'Deployed');
+            if (deployed.length === 0) return 0;
+            
+            const totalDays = deployed.reduce((sum, p) => {
+              const engaged = p.statusDates['Customer Engaged'];
+              const deployedDate = p.statusDates['Deployed'];
+              if (engaged?.start && deployedDate?.start) {
+                const start = new Date(engaged.start);
+                const end = new Date(deployedDate.start);
+                return sum + Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+              }
+              return sum;
+            }, 0);
+            
+            return Math.round(totalDays / deployed.length);
+          };
+
+          const getStatusDistribution = () => {
+            const statusCounts = {};
+            STATUS_OPTIONS.forEach(status => {
+              statusCounts[status] = projects.filter(p => p.status === status).length;
+            });
+            return Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
+          };
+
+          const getAverageDurationByStatus = () => {
+            const avgDays = {};
+            STATUS_OPTIONS.forEach(status => {
+              const projectsInStatus = projects.filter(p => p.statusDates[status]?.start);
+              if (projectsInStatus.length > 0) {
+                const totalDays = projectsInStatus.reduce((sum, p) => {
+                  const days = calculateDaysByStatus(p);
+                  return sum + (days[status] || 0);
+                }, 0);
+                avgDays[status] = Math.round(totalDays / projectsInStatus.length);
+              } else {
+                avgDays[status] = 0;
+              }
+            });
+            return avgDays;
+          };
+
+          const getProductTypeDistribution = () => {
+            const typeCounts = {};
+            PRODUCT_TYPES.forEach(type => {
+              typeCounts[type] = projects.filter(p => p.productType === type).length;
+            });
+            return Object.entries(typeCounts).map(([name, value]) => ({ name, value }));
+          };
+
+          // Header Component
+          const renderHeader = () => {
+            return h('div', { className: 'header' },
+              h('div', { className: 'container' },
+                h('div', { className: 'header-content' },
+                  h('div', { className: 'header-left' },
+                    h('img', { 
+                      src: 'https://d1io3yog0oux5.cloudfront.net/_b8dcb5c08d6485d82d30a00b7fbb96bb/actelis/files/theme/images/logo-sm.svg',
+                      alt: 'Actelis Logo'
+                    }),
+                    h('h1', null, 'MDU Trial Tracker')
+                  ),
+                  h('div', { className: 'header-right' },
+                    h('button', {
+                      className: 'btn btn-success',
+                      onClick: initNewProject
+                    }, '+ New Project'),
+                    h('input', {
+                      type: 'file',
+                      id: 'csvFileInput',
+                      accept: '.csv',
+                      style: { display: 'none' },
+                      onChange: importFromCSV
+                    }),
+                    h('button', {
+                      className: 'btn btn-primary',
+                      onClick: downloadHTMLWithData,
+                      title: 'Download HTML file with current data to share with colleagues'
+                    }, '💾 Save HTML'),
+                    h('button', {
+                      className: 'btn btn-secondary',
+                      onClick: () => document.getElementById('csvFileInput').click()
+                    }, '⬆️ Import CSV'),
+                    h('button', {
+                      className: 'btn btn-secondary',
+                      onClick: exportToCSV
+                    }, '⬇️ Export CSV'),
+                    h('button', {
+                      className: 'btn btn-secondary',
+                      onClick: resetDatabase,
+                      style: { background: '#dc3545' }
+                    }, '🗑️ Reset DB')
+                  )
+                )
+              )
+            );
+          };
+
+          // Tabs Component
+          const renderTabs = () => {
+            return h('div', { className: 'tabs' },
+              h('button', {
+                className: `tab ${view === 'overview' ? 'active' : ''}`,
+                onClick: () => setView('overview')
+              }, '📊 Overview'),
+              h('button', {
+                className: `tab ${view === 'customer' ? 'active' : ''}`,
+                onClick: () => setView('customer')
+              }, '👤 Customer View'),
+              h('button', {
+                className: `tab ${view === 'list' ? 'active' : ''}`,
+                onClick: () => setView('list')
+              }, '📋 All Projects')
+            );
+          };
+
+          // Overview Dashboard
+          const renderOverview = () => {
+            const filteredProjects = getFilteredProjects();
+            const avgDurationData = getAverageDurationByStatus();
+            
+            return h('div', null,
+              // Executive Summary
+              h('div', { className: 'executive-summary' },
+                h('div', { className: 'executive-title' }, '📈 Executive Summary'),
+                h('div', { className: 'executive-grid' },
+                  h('div', { style: { textAlign: 'center' } },
+                    h('div', { style: { fontSize: '3rem', fontWeight: 'bold' } }, projects.length),
+                    h('div', { style: { marginTop: '0.5rem', opacity: 0.9 } }, 'Total Projects')
+                  ),
+                  h('div', { style: { textAlign: 'center' } },
+                    h('div', { style: { fontSize: '3rem', fontWeight: 'bold' } }, getTotalEquipment()),
+                    h('div', { style: { marginTop: '0.5rem', opacity: 0.9 } }, 'Equipment Units')
+                  ),
+                  h('div', { style: { textAlign: 'center' } },
+                    h('div', { style: { fontSize: '3rem', fontWeight: 'bold' } }, getAverageCycleTime()),
+                    h('div', { style: { marginTop: '0.5rem', opacity: 0.9 } }, 'Avg Cycle Days')
+                  ),
+                  h('div', { style: { textAlign: 'center' } },
+                    h('div', { style: { fontSize: '3rem', fontWeight: 'bold' } }, 
+                      projects.filter(p => p.status === 'Deployed').length
+                    ),
+                    h('div', { style: { marginTop: '0.5rem', opacity: 0.9 } }, 'Deployed Projects')
+                  )
+                )
+              ),
+              
+              // Charts
+              h('div', { className: 'charts-grid' },
+                h('div', { className: 'chart-card' },
+                  h('div', { className: 'chart-title' }, '📊 Projects by Status'),
+                  h('div', { className: 'chart-container' },
+                    h(PieChart, { data: getStatusDistribution() })
+                  )
+                ),
+                h('div', { className: 'chart-card' },
+                  h('div', { className: 'chart-title' }, '⏱️ Average Days per Status'),
+                  h('div', { className: 'chart-container' },
+                    h('div', { className: 'bar-chart' },
+                      STATUS_OPTIONS.map(status => {
+                        const days = avgDurationData[status] || 0;
+                        const maxDays = Math.max(...Object.values(avgDurationData));
+                        const height = maxDays > 0 ? (days / maxDays) * 100 : 0;
+                        return h('div', { key: status, className: 'bar-item' },
+                          h('div', { 
+                            className: 'bar',
+                            style: { height: `${height}%` }
+                          },
+                            h('div', { className: 'bar-value' }, days)
+                          ),
+                          h('div', { className: 'bar-label' }, status.split(' ')[0])
+                        );
+                      })
+                    )
+                  )
+                ),
+                h('div', { className: 'chart-card' },
+                  h('div', { className: 'chart-title' }, '📦 Product Type Distribution'),
+                  h('div', { className: 'chart-container' },
+                    h(PieChart, { data: getProductTypeDistribution() })
+                  )
+                )
+              ),
+              
+              // Stats Grid
+              h('div', { className: 'stats-grid' },
+                h('div', { className: 'stat-card' },
+                  h('div', { className: 'stat-value' }, 
+                    projects.filter(p => p.status === 'Customer Trial/Test').length
+                  ),
+                  h('div', { className: 'stat-label' }, '🧪 Active Trials')
+                ),
+                h('div', { className: 'stat-card' },
+                  h('div', { className: 'stat-value' }, 
+                    projects.filter(p => p.status === 'Installation in process').length
+                  ),
+                  h('div', { className: 'stat-label' }, '🔧 In Installation')
+                ),
+                h('div', { className: 'stat-card' },
+                  h('div', { className: 'stat-value' }, 
+                    projects.filter(p => p.status === 'FOA').length
+                  ),
+                  h('div', { className: 'stat-label' }, '📄 Pending FOA')
+                ),
+                h('div', { className: 'stat-card' },
+                  h('div', { className: 'stat-value' }, 
+                    projects.filter(p => p.status === 'Customer Engaged').length
+                  ),
+                  h('div', { className: 'stat-label' }, '💼 Customer Engaged')
+                )
+              ),
+              
+              // Filters
+              h('div', { className: 'quick-actions' },
+                h('input', {
+                  type: 'text',
+                  className: 'search-box',
+                  placeholder: '🔍 Search customers...',
+                  value: searchTerm,
+                  onChange: (e) => setSearchTerm(e.target.value)
+                }),
+                h('div', { className: 'filter-group' },
+                  h('span', { className: 'filter-label' }, 'Product:'),
+                  h('select', {
+                    className: 'form-control',
+                    style: { width: 'auto' },
+                    value: filterProduct,
+                    onChange: (e) => setFilterProduct(e.target.value)
+                  },
+                    h('option', { value: 'All' }, 'All'),
+                    ...PRODUCT_TYPES.map(type => h('option', { key: type, value: type }, type))
+                  )
+                ),
+                h('div', { className: 'filter-group' },
+                  h('span', { className: 'filter-label' }, 'Type:'),
+                  h('select', {
+                    className: 'form-control',
+                    style: { width: 'auto' },
+                    value: filterProjectType,
+                    onChange: (e) => setFilterProjectType(e.target.value)
+                  },
+                    h('option', { value: 'All' }, 'All'),
+                    ...PROJECT_TYPES.map(type => h('option', { key: type, value: type }, type))
+                  )
+                ),
+                searchTerm || filterProduct !== 'All' || filterProjectType !== 'All' ?
+                  h('button', {
+                    className: 'btn btn-gray',
+                    onClick: () => {
+                      setSearchTerm('');
+                      setFilterProduct('All');
+                      setFilterProjectType('All');
+                    }
+                  }, '✕ Clear') : null
+              ),
+              
+              // Kanban Board
+              h('div', { className: 'kanban-board' },
+                STATUS_OPTIONS.map(status => {
+                  const statusProjects = filteredProjects.filter(p => p.status === status);
+                  return h('div', { key: status, className: 'kanban-column' },
+                    h('div', { className: 'kanban-header' },
+                      h('span', null, status),
+                      h('span', { className: 'kanban-count' }, statusProjects.length)
+                    ),
+                    statusProjects.length === 0 ?
+                      h('div', { className: 'empty-state', style: { padding: '1rem', fontSize: '0.875rem' } }, 
+                        'No projects'
+                      ) :
+                      statusProjects.map(project => {
+                        const days = calculateDaysByStatus(project);
+                        return h('div', { 
+                          key: project.id, 
+                          className: 'kanban-card',
+                          style: { position: 'relative' }
+                        },
+                          h('button', {
+                            onClick: (e) => { e.stopPropagation(); deleteProject(project.id); },
+                            style: {
+                              position: 'absolute',
+                              top: '0.5rem',
+                              right: '0.5rem',
+                              background: '#dc3545',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              padding: '0.25rem 0.5rem',
+                              cursor: 'pointer',
+                              fontSize: '0.75rem',
+                              fontWeight: '600'
+                            }
+                          }, '✕'),
+                          h('div', { 
+                            className: 'kanban-card-title',
+                            onClick: () => editProject(project),
+                            style: { cursor: 'pointer', paddingRight: '2rem' }
+                          }, project.customerName),
+                          h('div', { className: 'kanban-card-meta' }, 
+                            `${project.productType} • ${project.projectType}`
+                          ),
+                          h('div', { className: 'kanban-card-meta' }, 
+                            project.salesContact.name
+                          ),
+                          h('div', { className: 'kanban-card-days' }, 
+                            `${days[status] || 0} days in status`
+                          ),
+                          project.nextSteps ? h('div', { 
+                            style: { 
+                              marginTop: '0.5rem', 
+                              fontSize: '0.7rem', 
+                              color: '#0066a8',
+                              fontWeight: '600',
+                              borderTop: '1px solid #e5e7eb',
+                              paddingTop: '0.5rem',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              display: '-webkit-box',
+                              WebkitLineClamp: '1',
+                              WebkitBoxOrient: 'vertical'
+                            }
+                          }, `⏭️ ${project.nextSteps}`) : null,
+                          project.notes ? h('div', { 
+                            style: { 
+                              marginTop: '0.25rem', 
+                              fontSize: '0.7rem', 
+                              color: '#6b7280',
+                              fontStyle: 'italic',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              display: '-webkit-box',
+                              WebkitLineClamp: '1',
+                              WebkitBoxOrient: 'vertical'
+                            }
+                          }, `📝 ${project.notes}`) : null
+                        );
+                      })
+                  );
+                })
+              )
+            );
+          };
+
+          // Customer Dashboard (keeping same structure but with Actelis colors applied via CSS)
+          const renderCustomerView = () => {
+            const customer = selectedCustomer ? projects.find(p => p.id === selectedCustomer) : null;
+            
+            return h('div', null,
+              h('select', {
+                className: 'customer-select',
+                value: selectedCustomer || '',
+                onChange: (e) => setSelectedCustomer(parseInt(e.target.value))
+              },
+                h('option', { value: '' }, '-- Select a Customer --'),
+                ...projects.map(p => h('option', { key: p.id, value: p.id }, p.customerName))
+              ),
+              
+              customer ? h('div', null,
+                h('div', { className: 'customer-header' },
+                  h('div', { className: 'customer-info' },
+                    h('h2', null, customer.customerName),
+                    h('div', { className: 'customer-meta' },
+                      h('span', null, `📦 ${customer.productType}`),
+                      h('span', null, `🔌 ${customer.projectType}`),
+                      h('span', null, `📍 ${customer.status}`)
+                    )
+                  ),
+                  h('div', { style: { display: 'flex', gap: '0.5rem' } },
+                    h('button', {
+                      className: 'btn btn-primary',
+                      onClick: () => editProject(customer)
+                    }, '✏️ Edit Project'),
+                    h('button', {
+                      className: 'btn',
+                      style: { background: '#dc3545', color: 'white' },
+                      onClick: () => deleteProject(customer.id)
+                    }, '🗑️ Delete')
+                  )
+                ),
+                
+                h('div', { className: 'stats-grid', style: { gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' } },
+                  h('div', { className: 'stat-card' },
+                    h('div', { className: 'stat-value' }, 
+                      Object.values(customer.quantities).reduce((sum, qty) => sum + qty, 0)
+                    ),
+                    h('div', { className: 'stat-label' }, 'Total Units')
+                  ),
+                  h('div', { className: 'stat-card' },
+                    h('div', { className: 'stat-value' }, 
+                      calculateDaysByStatus(customer)[customer.status] || 0
+                    ),
+                    h('div', { className: 'stat-label' }, 'Days in Current Status')
+                  ),
+                  h('div', { className: 'stat-card' },
+                    h('div', { className: 'stat-value', style: { fontSize: '1.25rem' } }, 
+                      customer.shippingDate || 'N/A'
+                    ),
+                    h('div', { className: 'stat-label' }, 'Shipping Date')
+                  ),
+                  h('div', { className: 'stat-card' },
+                    h('div', { className: 'stat-value', style: { fontSize: '1rem' } }, 
+                      customer.trackingAWB || 'N/A'
+                    ),
+                    h('div', { className: 'stat-label' }, 'Tracking AWB')
+                  )
+                ),
+                
+                h('div', { className: 'card' },
+                  h('div', { className: 'card-header' },
+                    h('h3', null, 'Project Timeline')
+                  ),
+                  h('div', { className: 'card-body' },
+                    h('div', { className: 'timeline' },
+                      STATUS_OPTIONS.map(status => {
+                        const dates = customer.statusDates[status];
+                        const hasStarted = dates && dates.start;
+                        const isComplete = dates && dates.end;
+                        const isCurrent = customer.status === status;
+                        const days = hasStarted ? calculateDaysByStatus(customer)[status] : 0;
+                        
+                        return h('div', { key: status, className: 'timeline-item' },
+                          h('div', { 
+                            className: `timeline-dot ${isComplete ? 'completed' : isCurrent ? 'active' : 'pending'}`
+                          }),
+                          h('div', { className: 'timeline-content' },
+                            h('div', { className: 'timeline-title' }, 
+                              status,
+                              isCurrent ? ' (Current)' : ''
+                            ),
+                            hasStarted ? h('div', { className: 'timeline-dates' },
+                              `${dates.start} ${dates.end ? `→ ${dates.end}` : '→ In Progress'}`
+                            ) : h('div', { className: 'timeline-dates' }, 'Not started'),
+                            hasStarted ? h('div', { className: 'timeline-duration' }, 
+                              `${days} days`
+                            ) : null
+                          )
+                        );
+                      })
+                    )
+                  )
+                ),
+                
+                h('div', { className: 'card' },
+                  h('div', { className: 'card-header' },
+                    h('h3', null, 'Equipment Details')
+                  ),
+                  h('div', { className: 'card-body' },
+                    h('div', { className: 'equipment-section' },
+                      h('h4', { style: { marginBottom: '1rem', fontWeight: '600', color: '#004170' } }, 'PTMP Solutions'),
+                      h('div', { className: 'equipment-grid' },
+                        PTMP_MODELS.map(model => 
+                          customer.quantities[model.name] > 0 ?
+                            h('div', { key: model.name, className: 'equipment-item' },
+                              h('div', { className: 'equipment-qty' }, customer.quantities[model.name]),
+                              h('div', { className: 'equipment-name' }, model.name),
+                              h('div', { className: 'equipment-code' }, model.code)
+                            ) : null
+                        )
+                      )
+                    ),
+                    h('div', { className: 'equipment-section' },
+                      h('h4', { style: { marginBottom: '1rem', fontWeight: '600', color: '#004170' } }, 'Remote Units'),
+                      h('div', { className: 'equipment-grid' },
+                        REMOTE_MODELS.map(model => 
+                          customer.quantities[model.name] > 0 ?
+                            h('div', { key: model.name, className: 'equipment-item' },
+                              h('div', { className: 'equipment-qty' }, customer.quantities[model.name]),
+                              h('div', { className: 'equipment-name' }, model.name),
+                              h('div', { className: 'equipment-code' }, model.code)
+                            ) : null
+                        )
+                      )
+                    )
+                  )
+                ),
+                
+                h('div', { className: 'card' },
+                  h('div', { className: 'card-header' },
+                    h('h3', null, 'Contacts')
+                  ),
+                  h('div', { className: 'card-body' },
+                    h('div', { className: 'contacts-grid' },
+                      h('div', { className: 'contact-card' },
+                        h('div', { className: 'contact-title' }, '🔧 Technical Contact'),
+                        h('div', { className: 'contact-info' },
+                          h('div', null,
+                            h('div', { className: 'contact-label' }, 'Name'),
+                            customer.technicalContact.name
+                          ),
+                          h('div', null,
+                            h('div', { className: 'contact-label' }, 'Phone'),
+                            customer.technicalContact.phone
+                          ),
+                          h('div', null,
+                            h('div', { className: 'contact-label' }, 'Email'),
+                            customer.technicalContact.email
+                          )
+                        )
+                      ),
+                      h('div', { className: 'contact-card' },
+                        h('div', { className: 'contact-title' }, '📋 Administrative Contact'),
+                        h('div', { className: 'contact-info' },
+                          h('div', null,
+                            h('div', { className: 'contact-label' }, 'Name'),
+                            customer.adminContact.name
+                          ),
+                          h('div', null,
+                            h('div', { className: 'contact-label' }, 'Phone'),
+                            customer.adminContact.phone
+                          ),
+                          h('div', null,
+                            h('div', { className: 'contact-label' }, 'Email'),
+                            customer.adminContact.email
+                          )
+                        )
+                      ),
+                      h('div', { className: 'contact-card' },
+                        h('div', { className: 'contact-title' }, '💼 Sales Contact'),
+                        h('div', { className: 'contact-info' },
+                          h('div', null,
+                            h('div', { className: 'contact-label' }, 'Name'),
+                            customer.salesContact.name
+                          ),
+                          h('div', null,
+                            h('div', { className: 'contact-label' }, 'Phone'),
+                            customer.salesContact.phone
+                          ),
+                          h('div', null,
+                            h('div', { className: 'contact-label' }, 'Email'),
+                            customer.salesContact.email
+                          )
+                        )
+                      )
+                    )
+                  )
+                ),
+                
+                h('div', { className: 'card' },
+                  h('div', { className: 'card-header' },
+                    h('h3', null, 'Shipping Information')
+                  ),
+                  h('div', { className: 'card-body' },
+                    h('div', { style: { display: 'grid', gap: '1rem' } },
+                      h('div', null,
+                        h('div', { className: 'contact-label' }, 'Shipping Address'),
+                        h('div', null, customer.shippingAddress || 'Not specified')
+                      ),
+                      h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' } },
+                        h('div', null,
+                          h('div', { className: 'contact-label' }, 'Shipping Date'),
+                          h('div', null, customer.shippingDate || 'Not specified')
+                        ),
+                        h('div', null,
+                          h('div', { className: 'contact-label' }, 'Tracking AWB'),
+                          h('div', null, customer.trackingAWB || 'Not specified')
+                        )
+                      )
+                    )
+                  )
+                ),
+                
+                customer.nextSteps ? h('div', { className: 'card' },
+                  h('div', { className: 'card-header' },
+                    h('h3', null, '⏭️ Next Steps')
+                  ),
+                  h('div', { className: 'card-body' },
+                    h('div', { style: { whiteSpace: 'pre-wrap', color: '#004170', lineHeight: '1.6', fontWeight: '500' } }, 
+                      customer.nextSteps
+                    )
+                  )
+                ) : null,
+                
+                customer.notes ? h('div', { className: 'card' },
+                  h('div', { className: 'card-header' },
+                    h('h3', null, '📝 Project Notes')
+                  ),
+                  h('div', { className: 'card-body' },
+                    h('div', { style: { whiteSpace: 'pre-wrap', color: '#374151', lineHeight: '1.6' } }, 
+                      customer.notes
+                    )
+                  )
+                ) : null
+              ) : h('div', { className: 'empty-state' },
+                h('div', { className: 'empty-state-icon' }, '👤'),
+                h('p', null, 'Select a customer to view their project details')
+              )
+            );
+          };
+
+          // List View
+          const renderListView = () => {
+            const statusRows = [];
+            projects.forEach(project => {
+              STATUS_OPTIONS.forEach(status => {
+                const dates = project.statusDates[status];
+                if (dates && dates.start) {
+                  const start = new Date(dates.start);
+                  const end = dates.end ? new Date(dates.end) : new Date();
+                  const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                  
+                  statusRows.push({
+                    projectId: project.id,
+                    customerName: project.customerName,
+                    productType: project.productType,
+                    projectType: project.projectType,
+                    status: status,
+                    startDate: dates.start,
+                    endDate: dates.end,
+                    days: days,
+                    isCurrentStatus: project.status === status,
+                    salesContact: project.salesContact.name,
+                    project: project
+                  });
+                }
+              });
+            });
+
+            const getStatusBadgeClass = (status) => {
+              if (status === 'Deployed') return 'badge-green';
+              if (status === 'Customer Trial/Test') return 'badge-blue';
+              if (status === 'Installation in process') return 'badge-orange';
+              if (status === 'FOA') return 'badge-purple';
+              if (status === 'Turned Down') return 'badge-red';
+              return 'badge-gray';
+            };
+
+            return h('div', { className: 'card' },
+              h('div', { className: 'card-header' },
+                h('h3', null, 'All Projects - Status History')
+              ),
+              h('div', { className: 'table-container' },
+                h('table', null,
+                  h('thead', null,
+                    h('tr', null,
+                      h('th', null, 'Customer'),
+                      h('th', null, 'Product'),
+                      h('th', null, 'Type'),
+                      h('th', null, 'Status'),
+                      h('th', null, 'Start'),
+                      h('th', null, 'End'),
+                      h('th', null, 'Days'),
+                      h('th', null, 'Sales'),
+                      h('th', null, 'Actions')
+                    )
+                  ),
+                  h('tbody', null,
+                    statusRows.map((row, idx) =>
+                      h('tr', { 
+                        key: `${row.projectId}-${row.status}-${idx}`,
+                        style: row.isCurrentStatus ? { backgroundColor: '#f8fbfd' } : {}
+                      },
+                        h('td', null, row.customerName),
+                        h('td', null, row.productType),
+                        h('td', null, row.projectType),
+                        h('td', null,
+                          h('span', { className: `badge ${getStatusBadgeClass(row.status)}` }, row.status),
+                          row.isCurrentStatus && h('span', { 
+                            style: { marginLeft: '0.5rem', fontSize: '0.75rem', fontWeight: 600, color: '#0066a8' } 
+                          }, 'CURRENT')
+                        ),
+                        h('td', null, row.startDate || '-'),
+                        h('td', null, row.endDate || 'In Progress'),
+                        h('td', null, `${row.days} days`),
+                        h('td', null, row.salesContact),
+                        h('td', null,
+                          h('div', { style: { display: 'flex', gap: '0.5rem' } },
+                            h('button', {
+                              onClick: () => editProject(row.project),
+                              className: 'btn btn-primary',
+                              style: { padding: '0.25rem 0.75rem', fontSize: '0.75rem' }
+                            }, 'Edit'),
+                            h('button', {
+                              onClick: () => deleteProject(row.project.id),
+                              className: 'btn',
+                              style: { padding: '0.25rem 0.75rem', fontSize: '0.75rem', background: '#dc3545', color: 'white' }
+                            }, 'Delete')
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            );
+          };
+
+          // Form View (same structure with Actelis colors)
+          const renderForm = () => {
+            if (!formData) return null;
+
+            return h('div', { className: 'card' },
+              h('div', { className: 'card-body' },
+                h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' } },
+                  h('h2', { style: { color: '#004170' } }, editingProject > projects.length ? 'New Project' : 'Edit Project'),
+                  h('div', { style: { display: 'flex', gap: '0.5rem' } },
+                    h('button', {
+                      className: 'btn btn-primary',
+                      onClick: saveProject
+                    }, '💾 Save'),
+                    editingProject <= projects.length ? h('button', {
+                      className: 'btn',
+                      style: { background: '#dc3545', color: 'white' },
+                      onClick: () => {
+                        deleteProject(editingProject);
+                        cancelEdit();
+                      }
+                    }, '🗑️ Delete') : null,
+                    h('button', {
+                      className: 'btn btn-gray',
+                      onClick: cancelEdit
+                    }, '✕ Cancel')
+                  )
+                ),
+                
+                h('div', { className: 'section' },
+                  h('div', { className: 'section-title' }, 'Basic Information'),
+                  h('div', { className: 'form-grid form-grid-2' },
+                    h('div', { className: 'form-group' },
+                      h('label', { className: 'form-label' }, 'Customer Name *'),
+                      h('input', {
+                        type: 'text',
+                        className: 'form-control',
+                        value: formData.customerName,
+                        onChange: (e) => updateFormField('customerName', e.target.value)
+                      })
+                    ),
+                    h('div', { className: 'form-group' },
+                      h('label', { className: 'form-label' }, 'Product Type'),
+                      h('select', {
+                        className: 'form-control',
+                        value: formData.productType,
+                        onChange: (e) => updateFormField('productType', e.target.value)
+                      },
+                        PRODUCT_TYPES.map(type =>
+                          h('option', { key: type, value: type }, type)
+                        )
+                      )
+                    ),
+                    h('div', { className: 'form-group' },
+                      h('label', { className: 'form-label' }, 'Project Type'),
+                      h('select', {
+                        className: 'form-control',
+                        value: formData.projectType,
+                        onChange: (e) => updateFormField('projectType', e.target.value)
+                      },
+                        PROJECT_TYPES.map(type =>
+                          h('option', { key: type, value: type }, type)
+                        )
+                      )
+                    ),
+                    h('div', { className: 'form-group' },
+                      h('label', { className: 'form-label' }, 'Status'),
+                      h('select', {
+                        className: 'form-control',
+                        value: formData.status,
+                        onChange: (e) => updateFormField('status', e.target.value)
+                      },
+                        STATUS_OPTIONS.map(status =>
+                          h('option', { key: status, value: status }, status)
+                        )
+                      )
+                    )
+                  )
+                ),
+                
+                h('div', { className: 'section' },
+                  h('div', { className: 'section-title' }, 'PTMP Solutions Quantities'),
+                  h('div', { className: 'form-grid form-grid-4' },
+                    PTMP_MODELS.map(model =>
+                      h('div', { key: model.name, className: 'form-group' },
+                        h('label', { className: 'form-label' }, 
+                          model.name,
+                          h('span', { className: 'form-label-small' }, `(${model.code})`)
+                        ),
+                        h('input', {
+                          type: 'number',
+                          min: '0',
+                          className: 'form-control',
+                          value: formData.quantities[model.name],
+                          onChange: (e) => updateQuantity(model.name, e.target.value)
+                        })
+                      )
+                    )
+                  )
+                ),
+                
+                h('div', { className: 'section' },
+                  h('div', { className: 'section-title' }, 'GL90 Remote Units Quantities'),
+                  h('div', { className: 'form-grid form-grid-3' },
+                    REMOTE_MODELS.map(model =>
+                      h('div', { key: model.name, className: 'form-group' },
+                        h('label', { className: 'form-label' }, 
+                          model.name,
+                          h('span', { className: 'form-label-small' }, `(${model.code})`)
+                        ),
+                        h('input', {
+                          type: 'number',
+                          min: '0',
+                          className: 'form-control',
+                          value: formData.quantities[model.name],
+                          onChange: (e) => updateQuantity(model.name, e.target.value)
+                        })
+                      )
+                    )
+                  )
+                ),
+                
+                h('div', { className: 'section' },
+                  h('div', { className: 'section-title' }, 'Shipping Information'),
+                  h('div', { className: 'form-grid form-grid-2' },
+                    h('div', { className: 'form-group' },
+                      h('label', { className: 'form-label' }, 'Equipment Shipping Date'),
+                      h('input', {
+                        type: 'date',
+                        className: 'form-control',
+                        value: formData.shippingDate || '',
+                        onChange: (e) => updateFormField('shippingDate', e.target.value)
+                      })
+                    ),
+                    h('div', { className: 'form-group' },
+                      h('label', { className: 'form-label' }, 'Tracking Guide AWB'),
+                      h('input', {
+                        type: 'text',
+                        className: 'form-control',
+                        value: formData.trackingAWB || '',
+                        onChange: (e) => updateFormField('trackingAWB', e.target.value)
+                      })
+                    )
+                  ),
+                  h('div', { className: 'form-group' },
+                    h('label', { className: 'form-label' }, 'Shipping Address'),
+                    h('textarea', {
+                      className: 'form-control',
+                      rows: 2,
+                      value: formData.shippingAddress || '',
+                      onChange: (e) => updateFormField('shippingAddress', e.target.value)
+                    })
+                  )
+                ),
+                
+                h('div', { className: 'section' },
+                  h('div', { className: 'section-title' }, 'Status Timeline'),
+                  STATUS_OPTIONS.map(status =>
+                    h('div', { key: status, className: 'subsection' },
+                      h('div', { className: 'subsection-title' }, status),
+                      h('div', { className: 'form-grid form-grid-2' },
+                        h('div', { className: 'form-group' },
+                          h('label', { className: 'form-label' }, 'Start Date'),
+                          h('input', {
+                            type: 'date',
+                            className: 'form-control',
+                            value: formData.statusDates[status]?.start || '',
+                            onChange: (e) => updateStatusDate(status, 'start', e.target.value)
+                          })
+                        ),
+                        h('div', { className: 'form-group' },
+                          h('label', { className: 'form-label' }, 'End Date'),
+                          h('input', {
+                            type: 'date',
+                            className: 'form-control',
+                            value: formData.statusDates[status]?.end || '',
+                            onChange: (e) => updateStatusDate(status, 'end', e.target.value)
+                          })
+                        )
+                      )
+                    )
+                  )
+                ),
+                
+                h('div', { className: 'section' },
+                  h('div', { className: 'section-title' }, 'Contacts'),
+                  ['technicalContact', 'adminContact', 'salesContact'].map(contactType =>
+                    h('div', { key: contactType, className: 'subsection' },
+                      h('div', { className: 'subsection-title' },
+                        contactType === 'technicalContact' ? 'Technical Contact' :
+                        contactType === 'adminContact' ? 'Administrative Contact' :
+                        'Actelis Sales Contact'
+                      ),
+                      h('div', { className: 'form-grid form-grid-3' },
+                        h('div', { className: 'form-group' },
+                          h('label', { className: 'form-label' }, 'Name'),
+                          h('input', {
+                            type: 'text',
+                            className: 'form-control',
+                            value: formData[contactType].name,
+                            onChange: (e) => updateContact(contactType, 'name', e.target.value)
+                          })
+                        ),
+                        h('div', { className: 'form-group' },
+                          h('label', { className: 'form-label' }, 'Phone'),
+                          h('input', {
+                            type: 'tel',
+                            className: 'form-control',
+                            value: formData[contactType].phone,
+                            onChange: (e) => updateContact(contactType, 'phone', e.target.value)
+                          })
+                        ),
+                        h('div', { className: 'form-group' },
+                          h('label', { className: 'form-label' }, 'Email'),
+                          h('input', {
+                            type: 'email',
+                            className: 'form-control',
+                            value: formData[contactType].email,
+                            onChange: (e) => updateContact(contactType, 'email', e.target.value)
+                          })
+                        )
+                      )
+                    )
+                  )
+                ),
+                
+                h('div', { className: 'section' },
+                  h('div', { className: 'section-title' }, '⏭️ Next Steps'),
+                  h('div', { className: 'form-group' },
+                    h('label', { className: 'form-label' }, 'Next Steps / Action Items'),
+                    h('textarea', {
+                      className: 'form-control',
+                      rows: 2,
+                      placeholder: 'What are the next actions to move this project forward?',
+                      value: formData.nextSteps || '',
+                      onChange: (e) => updateFormField('nextSteps', e.target.value)
+                    })
+                  )
+                ),
+                
+                h('div', { className: 'section' },
+                  h('div', { className: 'section-title' }, '📝 Notes'),
+                  h('div', { className: 'form-group' },
+                    h('label', { className: 'form-label' }, 'Project Notes'),
+                    h('textarea', {
+                      className: 'form-control',
+                      rows: 4,
+                      placeholder: 'Add any notes, comments, or important information about this project...',
+                      value: formData.notes || '',
+                      onChange: (e) => updateFormField('notes', e.target.value)
+                    })
+                  )
+                )
+              )
+            );
+          };
+
+          return h('div', null,
+            renderHeader(),
+            h('div', { className: 'main-content' },
+              h('div', { className: 'container' },
+                view !== 'form' && renderTabs(),
+                view === 'overview' && renderOverview(),
+                view === 'customer' && renderCustomerView(),
+                view === 'list' && renderListView(),
+                view === 'form' && renderForm()
+              )
+            )
+          );
+        }
+
+        ReactDOM.render(React.createElement(MDUTrialTracker), document.getElementById('root'));
+    </script>
+</body>
+</html>
