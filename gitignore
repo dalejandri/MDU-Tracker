@@ -1,0 +1,51 @@
+# MDU Trial Tracker - Git Ignore File
+
+# Backup files
+*.backup
+*.bak
+*-backup.*
+backup-*
+
+# Temporary files
+*.tmp
+*.temp
+~*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local development
+node_modules/
+.env
+.env.local
+
+# Exported CSVs (optional - uncomment if you don't want to track CSVs)
+# *.csv
+
+# Downloaded HTML versions (optional)
+# mdu-tracker-*.html
+# !index.html
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+.cache/
+coverage/
