@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MDU Trial Tracker - Actelis</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -367,203 +365,583 @@
 <body>
     <div id="root"></div>
 
+    <!-- Load React libraries first -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
     <script>
         const { useState, useEffect, useRef, createElement: h } = React;
 
         const INITIAL_DATA = [
           {
-            id: 1,
-            customerName: "Metro Housing Solutions",
-            productType: "GL9000",
-            projectType: "Hybrid",
-            quantities: {
-              "GL916": 12, "GL916-R": 8, "GL908": 0, "GL908-R": 0, "GL904": 4, "GL904-R": 4,
-              "GL910C/GL9110C": 6, "GL901CS": 10, "GL91": 20, "GL91-RB": 15, "GL92": 0,
-              "GL92-R": 0, "GL93C": 8, "GL93C-WiFi": 12
-            },
-            status: "Deployed",
-            shippingDate: "2024-08-15",
-            shippingAddress: "123 Main St, New York, NY 10001",
-            trackingAWB: "1Z999AA10123456784",
-            nextSteps: "Schedule follow-up meeting to discuss phase 2 expansion",
-            notes: "Project completed successfully. Customer very satisfied with performance.",
-            nextSteps: "Schedule follow-up for phase 2 expansion discussion.",
-            statusDates: {
-              "Customer Engaged": { start: "2024-07-01", end: "2024-07-15" },
-              "Customer Trial/Test": { start: "2024-07-16", end: "2024-08-10" },
-              "FOA": { start: "2024-08-11", end: "2024-08-14" },
-              "Installation in process": { start: "2024-08-16", end: "2024-09-20" },
-              "Deployed": { start: "2024-09-21", end: null }
-            },
-            technicalContact: { name: "John Smith", phone: "+1-555-0101", email: "john.smith@metro.com" },
-            adminContact: { name: "Sarah Johnson", phone: "+1-555-0102", email: "sarah.j@metro.com" },
-            salesContact: { name: "Mike Anderson", phone: "+1-555-0201", email: "mike.a@actelis.com" }
+                    "id": 2,
+                    "customerName": "Monscierge",
+                    "productType": "GL900 and GL9000",
+                    "projectType": "Coax",
+                    "trialPurpose": "",
+                    "successCriteria": "",
+                    "status": "Installation in process",
+                    "shippingDate": "2025-02-28",
+                    "shippingAddress": "Hunter Robinson\n15121 Traditions Lake Parkway\nSuite A\nEdmond, Oklahoma\n73103\nSO25I000088 + SO25I000077",
+                    "trackingAWB": "772402332543 & 6002823330 (3/12)",
+                    "nextSteps": "",
+                    "notes": "FOA week of 12/15",
+                    "quantities": {
+                              "GL916": 1,
+                              "GL916-R": 0,
+                              "GL908": 0,
+                              "GL908-R": 0,
+                              "GL904": 0,
+                              "GL904-R": 0,
+                              "GL910C/GL9110C": 0,
+                              "GL901CS": 0,
+                              "GL91": 12,
+                              "GL91-RB": 0,
+                              "GL92": 0,
+                              "GL92-R": 0,
+                              "GL93C": 0,
+                              "GL93C-WiFi": 0
+                    },
+                    "statusDates": {
+                              "Customer Engaged": {
+                                        "start": "2025-02-19",
+                                        "end": "2025-04-10"
+                              },
+                              "Customer Trial/Test": {
+                                        "start": "2025-04-11",
+                                        "end": "2025-12-18"
+                              },
+                              "FOA": {
+                                        "start": "2025-04-11",
+                                        "end": "2025-04-18"
+                              },
+                              "Installation in process": {
+                                        "start": "2025-12-15",
+                                        "end": "2025-12-17"
+                              },
+                              "Deployed": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Turned Down": {
+                                        "start": null,
+                                        "end": null
+                              }
+                    },
+                    "technicalContact": {
+                              "name": "Ernie Noblett VP of Engineering",
+                              "phone": "C: (405) 301-0698",
+                              "email": "ernie.noblett@monscierge.com"
+                    },
+                    "adminContact": {
+                              "name": "Hunter Robinson  Account Manager",
+                              "phone": "O: +1 (888) 426-5730 ",
+                              "email": "hunter.robinson@monscierge.com"
+                    },
+                    "salesContact": {
+                              "name": "Gary Massone",
+                              "phone": "+1 (925) 352-8856",
+                              "email": "garym@actelis.com"
+                    }
           },
           {
-            id: 2,
-            customerName: "Urban Connect Networks",
-            productType: "GL900",
-            projectType: "Coax",
-            quantities: {
-              "GL916": 8, "GL916-R": 6, "GL908": 4, "GL908-R": 4, "GL904": 0, "GL904-R": 0,
-              "GL910C/GL9110C": 8, "GL901CS": 16, "GL91": 12, "GL91-RB": 0, "GL92": 8,
-              "GL92-R": 6, "GL93C": 0, "GL93C-WiFi": 10
-            },
-            status: "Installation in process",
-            shippingDate: "2024-09-20",
-            shippingAddress: "456 Tech Blvd, San Francisco, CA 94105",
-            trackingAWB: "1Z999AA10123456790",
-            nextSteps: "Complete installation by end of week, schedule customer training",
-            notes: "Installation team reports excellent signal quality. Expected completion next week.",
-            nextSteps: "Complete final building installation. Schedule customer training session.",
-            statusDates: {
-              "Customer Engaged": { start: "2024-08-10", end: "2024-08-25" },
-              "Customer Trial/Test": { start: "2024-08-26", end: "2024-09-15" },
-              "FOA": { start: "2024-09-16", end: "2024-09-19" },
-              "Installation in process": { start: "2024-09-21", end: null },
-              "Deployed": { start: null, end: null }
-            },
-            technicalContact: { name: "Emily Chen", phone: "+1-555-0103", email: "emily.c@urbanconnect.com" },
-            adminContact: { name: "Robert Lee", phone: "+1-555-0104", email: "robert.l@urbanconnect.com" },
-            salesContact: { name: "Lisa Martinez", phone: "+1-555-0202", email: "lisa.m@actelis.com" }
+                    "id": 3,
+                    "customerName": "Ellumnet/Sprocket",
+                    "productType": "GL900",
+                    "projectType": "Coax",
+                    "trialPurpose": "",
+                    "successCriteria": "",
+                    "status": "Customer Trial/Test",
+                    "shippingDate": "2025-04-27",
+                    "shippingAddress": "2323 Bryan St, Suite 1520, Dallas TX 75201",
+                    "trackingAWB": "UPS#1ZG5268D0309397277",
+                    "nextSteps": "",
+                    "notes": "Long term 90 days\nfield trial at the MDU where the MoCA and Ethernet over POTS have failed. ",
+                    "quantities": {
+                              "GL916": 1,
+                              "GL916-R": 0,
+                              "GL908": 0,
+                              "GL908-R": 0,
+                              "GL904": 0,
+                              "GL904-R": 0,
+                              "GL910C/GL9110C": 0,
+                              "GL901CS": 0,
+                              "GL91": 10,
+                              "GL91-RB": 0,
+                              "GL92": 0,
+                              "GL92-R": 0,
+                              "GL93C": 0,
+                              "GL93C-WiFi": 0
+                    },
+                    "statusDates": {
+                              "Customer Engaged": {
+                                        "start": "2025-03-20",
+                                        "end": "2025-04-16"
+                              },
+                              "Customer Trial/Test": {
+                                        "start": "2025-04-17",
+                                        "end": null
+                              },
+                              "FOA": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Installation in process": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Deployed": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Turned Down": {
+                                        "start": null,
+                                        "end": null
+                              }
+                    },
+                    "technicalContact": {
+                              "name": "Alexander Lynn Network Operations Manager",
+                              "phone": "m: +1-972-322-1075",
+                              "email": "alynn@sprocketnetworks.com"
+                    },
+                    "adminContact": {
+                              "name": "Timothy Valis Chief Technology Officer",
+                              "phone": "c: 214-552-3288",
+                              "email": "tvalis@sprocketnetworks.com"
+                    },
+                    "salesContact": {
+                              "name": "Gary Massone",
+                              "phone": "+1 (925) 352-8856",
+                              "email": "garym@actelis.com"
+                    }
           },
           {
-            id: 3,
-            customerName: "CityWide Broadband",
-            productType: "GL900 and GL9000",
-            projectType: "Cooper",
-            quantities: {
-              "GL916": 15, "GL916-R": 12, "GL908": 6, "GL908-R": 6, "GL904": 8, "GL904-R": 8,
-              "GL910C/GL9110C": 10, "GL901CS": 0, "GL91": 25, "GL91-RB": 20, "GL92": 10,
-              "GL92-R": 8, "GL93C": 12, "GL93C-WiFi": 18
-            },
-            status: "Customer Trial/Test",
-            shippingDate: "2024-10-05",
-            shippingAddress: "789 Network Ave, Chicago, IL 60601",
-            trackingAWB: "1Z999AA10123456801",
-            nextSteps: "Present trial results to management team next Tuesday",
-            notes: "Customer testing phase going well. Requesting additional demo for management team.",
-            nextSteps: "Arrange executive demo presentation. Provide ROI analysis document.",
-            statusDates: {
-              "Customer Engaged": { start: "2024-09-15", end: "2024-09-30" },
-              "Customer Trial/Test": { start: "2024-10-01", end: null },
-              "FOA": { start: null, end: null },
-              "Installation in process": { start: null, end: null },
-              "Deployed": { start: null, end: null }
-            },
-            technicalContact: { name: "David Park", phone: "+1-555-0105", email: "david.p@citywide.com" },
-            adminContact: { name: "Michelle Wong", phone: "+1-555-0106", email: "michelle.w@citywide.com" },
-            salesContact: { name: "Tom Bradley", phone: "+1-555-0203", email: "tom.b@actelis.com" }
+                    "id": 4,
+                    "customerName": "Cambium Networks",
+                    "productType": "GL900",
+                    "projectType": "Coax",
+                    "trialPurpose": "",
+                    "successCriteria": "",
+                    "status": "Customer Trial/Test",
+                    "shippingDate": null,
+                    "shippingAddress": "",
+                    "trackingAWB": "",
+                    "nextSteps": "3 more GL91 are being sent for stress test",
+                    "notes": "MoM:\n•\tKey Observations R3.2\no\tDisabling port-isolation helped inter-VLAN communication between wireless/wired clients across multiple APs and same AP. \no\tCurrent testing scope is limited to current Cambium AP deployment.\n\tFunctionality tests are covered\no\tWhat is missing and what we are looking for?\n\tCurrent Actelis deployment type\n•\tWhat all models of Actelis endpoints are planned to deploy with Cambium?\n\tTesting scope\n•\tStress test with Actelis and Cambium devices\n•\tLongevity \n•\tNumber of APs in 1 Actelis switch.\n•\tNegative traffic impact \n•\tRequest\no\tWe currently have NL-91 endpoints. If this is the preferred deployment model, and if feasible, please share a couple more units for scale, stress, and negative test scenarios.\no\tAny additional insights regarding the Actelis deployment would be helpful, specifically:\n\tNumber of APs per Actelis switch\n\tTraffic patterns (e.g., multicast, broadcast)\n",
+                    "quantities": {
+                              "GL916": 1,
+                              "GL916-R": 0,
+                              "GL908": 0,
+                              "GL908-R": 0,
+                              "GL904": 0,
+                              "GL904-R": 0,
+                              "GL910C/GL9110C": 0,
+                              "GL901CS": 0,
+                              "GL91": 8,
+                              "GL91-RB": 0,
+                              "GL92": 0,
+                              "GL92-R": 0,
+                              "GL93C": 0,
+                              "GL93C-WiFi": 0
+                    },
+                    "statusDates": {
+                              "Customer Engaged": {
+                                        "start": "2025-01-06",
+                                        "end": "2025-02-14"
+                              },
+                              "Customer Trial/Test": {
+                                        "start": "2025-02-21",
+                                        "end": "2025-12-19"
+                              },
+                              "FOA": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Installation in process": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Deployed": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Turned Down": {
+                                        "start": null,
+                                        "end": null
+                              }
+                    },
+                    "technicalContact": {
+                              "name": "Shashank Tadakamadla",
+                              "phone": "",
+                              "email": "shashank.tadakamadla@cambiumnetworks.com"
+                    },
+                    "adminContact": {
+                              "name": "Azif Abdulsalam",
+                              "phone": "",
+                              "email": "azif.abdulsalam@cambiumnetworks.com"
+                    },
+                    "salesContact": {
+                              "name": "Gary Massone",
+                              "phone": "",
+                              "email": ""
+                    }
           },
           {
-            id: 4,
-            customerName: "Summit Residential Networks",
-            productType: "GL9000",
-            projectType: "Hybrid",
-            quantities: {
-              "GL916": 10, "GL916-R": 10, "GL908": 0, "GL908-R": 0, "GL904": 5, "GL904-R": 5,
-              "GL910C/GL9110C": 8, "GL901CS": 12, "GL91": 18, "GL91-RB": 16, "GL92": 0,
-              "GL92-R": 0, "GL93C": 10, "GL93C-WiFi": 15
-            },
-            status: "FOA",
-            shippingDate: "2024-10-25",
-            shippingAddress: "321 Summit Dr, Austin, TX 78701",
-            trackingAWB: "1Z999AA10123456812",
-            notes: "FOA paperwork in review. Awaiting final signatures from legal department.",
-            nextSteps: "Follow up with legal team. Prepare installation schedule.",
-            statusDates: {
-              "Customer Engaged": { start: "2024-09-20", end: "2024-10-10" },
-              "Customer Trial/Test": { start: "2024-10-11", end: "2024-10-23" },
-              "FOA": { start: "2024-10-24", end: null },
-              "Installation in process": { start: null, end: null },
-              "Deployed": { start: null, end: null }
-            },
-            technicalContact: { name: "Amanda Foster", phone: "+1-555-0107", email: "amanda.f@summit.com" },
-            adminContact: { name: "Kevin Brown", phone: "+1-555-0108", email: "kevin.b@summit.com" },
-            salesContact: { name: "Jennifer Lopez", phone: "+1-555-0204", email: "jennifer.l@actelis.com" }
+                    "id": 5,
+                    "customerName": "CalMSP",
+                    "productType": "GL900",
+                    "projectType": "Hybrid",
+                    "trialPurpose": "",
+                    "successCriteria": "",
+                    "status": "Customer Engaged",
+                    "shippingDate": null,
+                    "shippingAddress": "2521 Peet Ln\nEscondido, CA 92025\n\nAttn: Clint Kennedy\n",
+                    "trackingAWB": "",
+                    "nextSteps": "",
+                    "notes": "Ravit shipping lab EQ",
+                    "quantities": {
+                              "GL916": 1,
+                              "GL916-R": 0,
+                              "GL908": 0,
+                              "GL908-R": 0,
+                              "GL904": 0,
+                              "GL904-R": 0,
+                              "GL910C/GL9110C": 0,
+                              "GL901CS": 0,
+                              "GL91": 4,
+                              "GL91-RB": 0,
+                              "GL92": 2,
+                              "GL92-R": 0,
+                              "GL93C": 0,
+                              "GL93C-WiFi": 0
+                    },
+                    "statusDates": {
+                              "Customer Engaged": {
+                                        "start": "2025-08-14",
+                                        "end": "2025-11-21"
+                              },
+                              "Customer Trial/Test": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "FOA": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Installation in process": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Deployed": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Turned Down": {
+                                        "start": null,
+                                        "end": null
+                              }
+                    },
+                    "technicalContact": {
+                              "name": "",
+                              "phone": "",
+                              "email": ""
+                    },
+                    "adminContact": {
+                              "name": "Clint Kennedy",
+                              "phone": "",
+                              "email": "clint@calmsp.com"
+                    },
+                    "salesContact": {
+                              "name": "Gary Massone",
+                              "phone": "",
+                              "email": "garym@actelis.com"
+                    }
           },
           {
-            id: 5,
-            customerName: "TechTower Solutions",
-            productType: "GL900",
-            projectType: "Coax",
-            quantities: {
-              "GL916": 6, "GL916-R": 4, "GL908": 3, "GL908-R": 3, "GL904": 0, "GL904-R": 0,
-              "GL910C/GL9110C": 5, "GL901CS": 14, "GL91": 10, "GL91-RB": 0, "GL92": 6,
-              "GL92-R": 4, "GL93C": 0, "GL93C-WiFi": 8
-            },
-            status: "Customer Engaged",
-            shippingDate: null,
-            shippingAddress: "555 Tower Rd, Seattle, WA 98101",
-            trackingAWB: null,
-            notes: "Initial discussions positive. Waiting on budget approval for Q1.",
-            nextSteps: "Send proposal for Q1 budget cycle. Schedule CFO meeting.",
-            statusDates: {
-              "Customer Engaged": { start: "2024-11-01", end: null },
-              "Customer Trial/Test": { start: null, end: null },
-              "FOA": { start: null, end: null },
-              "Installation in process": { start: null, end: null },
-              "Deployed": { start: null, end: null }
-            },
-            technicalContact: { name: "Brian Wilson", phone: "+1-555-0109", email: "brian.w@techtower.com" },
-            adminContact: { name: "Patricia Davis", phone: "+1-555-0110", email: "patricia.d@techtower.com" },
-            salesContact: { name: "Steve Rogers", phone: "+1-555-0205", email: "steve.r@actelis.com" }
+                    "id": 6,
+                    "customerName": "Paul Bunyan Communications",
+                    "productType": "GL900",
+                    "projectType": "Coax",
+                    "trialPurpose": "",
+                    "successCriteria": "",
+                    "status": "Turned Down",
+                    "shippingDate": null,
+                    "shippingAddress": "Paul Bunyan Communications\n1831 Anne Street NW\nBemidji, MN 56601\nAttn: Rob St. Clair\n",
+                    "trackingAWB": "",
+                    "nextSteps": "Rob Shaeffer to schedule a call with Rob St. Clair <rob.stclair@paulbunyan.coop>",
+                    "notes": "From: Gary Massone <garym@actelis.com> \nSent: Friday, December 12, 2025 7:52 AM\nTo: Rob St. Clair <rob.stclair@paulbunyan.coop>\nCc: Ravit Samoch <Rsamoch@actelis.com>; Daniel Alejandri <dalejandri@actelis.com>; Mark DeVol <markd@actelis.com>\nSubject: Re: [External]RE: Actelis Networks Lab Trial System\n\nRob:\n\nThank you for your feedback.\n\nI will speak with my team regarding this.\n\nWould it be possible for one of my engineers to discuss this with you? No sales just an engineer-to-engineer discussion.\n\nRob, we strive to offer the best product possible and what we've learned over the years is to understand operational fit, efficiency and ease of use. Looks like we're missing something important.\n\nPlease let me know if you have 15 to 30 minutes later today or next week and our Rob Shaeffer will give you a call.\n\nThanks,\n\n",
+                    "quantities": {
+                              "GL916": 1,
+                              "GL916-R": 0,
+                              "GL908": 0,
+                              "GL908-R": 0,
+                              "GL904": 0,
+                              "GL904-R": 0,
+                              "GL910C/GL9110C": 0,
+                              "GL901CS": 0,
+                              "GL91": 0,
+                              "GL91-RB": 0,
+                              "GL92": 6,
+                              "GL92-R": 0,
+                              "GL93C": 0,
+                              "GL93C-WiFi": 0
+                    },
+                    "statusDates": {
+                              "Customer Engaged": {
+                                        "start": "2025-10-03",
+                                        "end": "2025-10-15"
+                              },
+                              "Customer Trial/Test": {
+                                        "start": "2025-11-06",
+                                        "end": null
+                              },
+                              "FOA": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Installation in process": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Deployed": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Turned Down": {
+                                        "start": "2025-12-12",
+                                        "end": "2025-12-12"
+                              }
+                    },
+                    "technicalContact": {
+                              "name": "Lane Skerik",
+                              "phone": "",
+                              "email": "lane.skerik@paulbunyan.coop"
+                    },
+                    "adminContact": {
+                              "name": "Rob Stclair",
+                              "phone": "",
+                              "email": "rob.stclair@paulbunyan.coop"
+                    },
+                    "salesContact": {
+                              "name": "Gary Massone",
+                              "phone": "+1 (925) 352-8856",
+                              "email": "garym@actelis.com"
+                    }
           },
           {
-            id: 6,
-            customerName: "Coastal Communications",
-            productType: "GL900 and GL9000",
-            projectType: "Hybrid",
-            quantities: {
-              "GL916": 14, "GL916-R": 10, "GL908": 5, "GL908-R": 5, "GL904": 6, "GL904-R": 6,
-              "GL910C/GL9110C": 9, "GL901CS": 11, "GL91": 22, "GL91-RB": 18, "GL92": 8,
-              "GL92-R": 7, "GL93C": 11, "GL93C-WiFi": 16
-            },
-            status: "Deployed",
-            shippingDate: "2024-07-20",
-            shippingAddress: "888 Beach Blvd, Miami, FL 33139",
-            trackingAWB: "1Z999AA10123456823",
-            notes: "Excellent deployment. Customer has requested quote for phase 2 expansion.",
-            nextSteps: "Prepare phase 2 proposal. Schedule quarterly review meeting.",
-            statusDates: {
-              "Customer Engaged": { start: "2024-06-01", end: "2024-06-20" },
-              "Customer Trial/Test": { start: "2024-06-21", end: "2024-07-15" },
-              "FOA": { start: "2024-07-16", end: "2024-07-19" },
-              "Installation in process": { start: "2024-07-21", end: "2024-08-25" },
-              "Deployed": { start: "2024-08-26", end: null }
-            },
-            technicalContact: { name: "Carlos Rodriguez", phone: "+1-555-0111", email: "carlos.r@coastal.com" },
-            adminContact: { name: "Linda Martinez", phone: "+1-555-0112", email: "linda.m@coastal.com" },
-            salesContact: { name: "Nancy White", phone: "+1-555-0206", email: "nancy.w@actelis.com" }
+                    "id": 7,
+                    "customerName": "Xiber",
+                    "productType": "GL900",
+                    "projectType": "Coax",
+                    "trialPurpose": "",
+                    "successCriteria": "",
+                    "status": "Customer Trial/Test",
+                    "shippingDate": "2025-04-04",
+                    "shippingAddress": "Xiber (Stephen Hon)\n1429 Chase Ct.\nCarmel\nIN  46032, United States",
+                    "trackingAWB": "1ZG5268D1232038915",
+                    "nextSteps": "Upgrade lab devices to Release 3.0 for testing.",
+                    "notes": "Daniel notes\nWe will be sending you the following:\n\nOne GL916\nOne GL916 hardened in OSP enclosure\nTwo GL91s\nTwo GL92Rs\nOne power supply \nOne 19-inch rack\n",
+                    "quantities": {
+                              "GL916": 1,
+                              "GL916-R": 0,
+                              "GL908": 0,
+                              "GL908-R": 0,
+                              "GL904": 0,
+                              "GL904-R": 0,
+                              "GL910C/GL9110C": 0,
+                              "GL901CS": 0,
+                              "GL91": 2,
+                              "GL91-RB": 0,
+                              "GL92": 0,
+                              "GL92-R": 2,
+                              "GL93C": 0,
+                              "GL93C-WiFi": 0
+                    },
+                    "statusDates": {
+                              "Customer Engaged": {
+                                        "start": "2025-02-12",
+                                        "end": "2025-04-25"
+                              },
+                              "Customer Trial/Test": {
+                                        "start": "2025-04-17",
+                                        "end": null
+                              },
+                              "FOA": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Installation in process": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Deployed": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Turned Down": {
+                                        "start": null,
+                                        "end": null
+                              }
+                    },
+                    "technicalContact": {
+                              "name": "Drinis Hallaci",
+                              "phone": "",
+                              "email": "dhallaci@xiber.net"
+                    },
+                    "adminContact": {
+                              "name": "Stephen Hon ",
+                              "phone": "",
+                              "email": "stephen@xiber.net"
+                    },
+                    "salesContact": {
+                              "name": "Gary Massone",
+                              "phone": "+1 (925) 352-8856",
+                              "email": "garym@actelis.com"
+                    }
           },
           {
-            id: 7,
-            customerName: "Skyline Network Services",
-            productType: "GL9000",
-            projectType: "Cooper",
-            quantities: {
-              "GL916": 11, "GL916-R": 9, "GL908": 0, "GL908-R": 0, "GL904": 7, "GL904-R": 7,
-              "GL910C/GL9110C": 7, "GL901CS": 0, "GL91": 16, "GL91-RB": 14, "GL92": 9,
-              "GL92-R": 8, "GL93C": 9, "GL93C-WiFi": 13
-            },
-            status: "Installation in process",
-            shippingDate: "2024-10-10",
-            shippingAddress: "999 Skyline Dr, Denver, CO 80202",
-            trackingAWB: "1Z999AA10123456834",
-            notes: "On schedule. Installation team working on final building. Minor cable routing issue resolved.",
-            nextSteps: "Complete final building by Friday. Schedule acceptance testing.",
-            statusDates: {
-              "Customer Engaged": { start: "2024-09-01", end: "2024-09-18" },
-              "Customer Trial/Test": { start: "2024-09-19", end: "2024-10-05" },
-              "FOA": { start: "2024-10-06", end: "2024-10-09" },
-              "Installation in process": { start: "2024-10-11", end: null },
-              "Deployed": { start: null, end: null }
-            },
-            technicalContact: { name: "Rachel Green", phone: "+1-555-0113", email: "rachel.g@skyline.com" },
-            adminContact: { name: "Mark Taylor", phone: "+1-555-0114", email: "mark.t@skyline.com" },
-            salesContact: { name: "Chris Evans", phone: "+1-555-0207", email: "chris.e@actelis.com" }
+                    "id": 8,
+                    "customerName": "Wi-Fiber",
+                    "productType": "GL900",
+                    "projectType": "Coax",
+                    "trialPurpose": "",
+                    "successCriteria": "",
+                    "status": "Customer Engaged",
+                    "shippingDate": null,
+                    "shippingAddress": "",
+                    "trackingAWB": "",
+                    "nextSteps": "Gary to touch bases with Angelo",
+                    "notes": "Waiting for signed trial agreement",
+                    "quantities": {
+                              "GL916": null,
+                              "GL916-R": 0,
+                              "GL908": 0,
+                              "GL908-R": 0,
+                              "GL904": 0,
+                              "GL904-R": 0,
+                              "GL910C/GL9110C": 0,
+                              "GL901CS": 0,
+                              "GL91": 0,
+                              "GL91-RB": 0,
+                              "GL92": 0,
+                              "GL92-R": 0,
+                              "GL93C": 0,
+                              "GL93C-WiFi": 0
+                    },
+                    "statusDates": {
+                              "Customer Engaged": {
+                                        "start": "2025-11-10",
+                                        "end": "2025-12-16"
+                              },
+                              "Customer Trial/Test": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "FOA": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Installation in process": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Deployed": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Turned Down": {
+                                        "start": null,
+                                        "end": null
+                              }
+                    },
+                    "technicalContact": {
+                              "name": "",
+                              "phone": "",
+                              "email": ""
+                    },
+                    "adminContact": {
+                              "name": "Angelo",
+                              "phone": "",
+                              "email": "angelo@wi-fiber.io"
+                    },
+                    "salesContact": {
+                              "name": "Gary Massone",
+                              "phone": "+1 (925) 352-8856",
+                              "email": "garym@actelis.com"
+                    }
+          },
+          {
+                    "id": 9,
+                    "customerName": "INTECH",
+                    "productType": "GL900",
+                    "projectType": "Coax",
+                    "trialPurpose": "",
+                    "successCriteria": "",
+                    "quantities": {
+                              "GL916": 1,
+                              "GL916-R": 0,
+                              "GL908": 0,
+                              "GL908-R": 0,
+                              "GL904": 0,
+                              "GL904-R": 0,
+                              "GL910C/GL9110C": 0,
+                              "GL901CS": 0,
+                              "GL91": 6,
+                              "GL91-RB": 0,
+                              "GL92": 0,
+                              "GL92-R": 0,
+                              "GL93C": 0,
+                              "GL93C-WiFi": 0
+                    },
+                    "status": "Customer Trial/Test",
+                    "shippingDate": "2025-09-04",
+                    "shippingAddress": "Leonard Jenkins\n28280 Etumakee Way\nClewiston, FL  33440-7657\nSO25I000242\n",
+                    "trackingAWB": "8840 0950 3196",
+                    "nextSteps": "Follow up with Leonard on 12/08/2025",
+                    "notes": "Equipment working good, other than seems sensitive to power glitches.\nHave had to power cycle after glitches and brownouts.\nThis could become a problem for the MDUs.\n\nWe might have to do some research to find better power adapters for your modems.\nOr perhaps some sort of hardware/watchdog modification for them to reboot when locked up.\n\nOrder Number: SO25I000242 - Cust Purch Ord 82025\n501RG0302\tE2504000114\n506R61245\tG2347004923 G2347004927 G2347004930 G2347004934 G2347004935 G2347004936\n",
+                    "statusDates": {
+                              "Customer Engaged": {
+                                        "start": "2025-06-13",
+                                        "end": "2025-08-19"
+                              },
+                              "Customer Trial/Test": {
+                                        "start": "2025-09-11",
+                                        "end": null
+                              },
+                              "FOA": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Installation in process": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Deployed": {
+                                        "start": null,
+                                        "end": null
+                              },
+                              "Turned Down": {
+                                        "start": null,
+                                        "end": null
+                              }
+                    },
+                    "technicalContact": {
+                              "name": "Leonard Jenkins",
+                              "phone": "(725) 465-8050 ext 5",
+                              "email": "leonard@intechspeed.com"
+                    },
+                    "adminContact": {
+                              "name": "Nando Ateho ",
+                              "phone": "(725) 465-8050",
+                              "email": "nando@intechspeed.com"
+                    },
+                    "salesContact": {
+                              "name": "Gary Massone",
+                              "phone": "(925) 352-8856",
+                              "email": "garym@actelis.com"
+                    }
           }
-        ];
+];
 
         const STATUS_OPTIONS = [
           "Customer Engaged",
@@ -793,37 +1171,77 @@
             reader.onload = (e) => {
               try {
                 const text = e.target.result;
-                const lines = text.split('\n').filter(line => line.trim());
                 
-                if (lines.length < 2) {
+                // Proper CSV parser that handles multi-line quoted fields
+                const parseCSV = (csvText) => {
+                  const rows = [];
+                  let currentRow = [];
+                  let currentField = '';
+                  let insideQuotes = false;
+                  
+                  for (let i = 0; i < csvText.length; i++) {
+                    const char = csvText[i];
+                    const nextChar = csvText[i + 1];
+                    
+                    if (char === '"') {
+                      if (insideQuotes && nextChar === '"') {
+                        // Escaped quote
+                        currentField += '"';
+                        i++; // Skip next quote
+                      } else {
+                        // Toggle quote state
+                        insideQuotes = !insideQuotes;
+                      }
+                    } else if (char === ',' && !insideQuotes) {
+                      // Field separator
+                      currentRow.push(currentField);
+                      currentField = '';
+                    } else if ((char === '\n' || char === '\r') && !insideQuotes) {
+                      // Row separator (handle both \n and \r\n)
+                      if (char === '\r' && nextChar === '\n') {
+                        i++; // Skip the \n in \r\n
+                      }
+                      if (currentField || currentRow.length > 0) {
+                        currentRow.push(currentField);
+                        if (currentRow.some(field => field.trim())) {
+                          rows.push(currentRow);
+                        }
+                        currentRow = [];
+                        currentField = '';
+                      }
+                    } else {
+                      currentField += char;
+                    }
+                  }
+                  
+                  // Add last field and row if exists
+                  if (currentField || currentRow.length > 0) {
+                    currentRow.push(currentField);
+                    if (currentRow.some(field => field.trim())) {
+                      rows.push(currentRow);
+                    }
+                  }
+                  
+                  return rows;
+                };
+                
+                const rows = parseCSV(text);
+                
+                if (rows.length < 2) {
                   alert('CSV file appears to be empty');
                   return;
                 }
 
-                const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+                const headers = rows[0].map(h => h.trim());
                 const newProjects = [];
 
-                for (let i = 1; i < lines.length; i++) {
-                  const values = [];
-                  let currentValue = '';
-                  let insideQuotes = false;
-
-                  for (let char of lines[i]) {
-                    if (char === '"') {
-                      insideQuotes = !insideQuotes;
-                    } else if (char === ',' && !insideQuotes) {
-                      values.push(currentValue.trim());
-                      currentValue = '';
-                    } else {
-                      currentValue += char;
-                    }
-                  }
-                  values.push(currentValue.trim());
+                for (let i = 1; i < rows.length; i++) {
+                  const values = rows[i].map(v => v.trim());
 
                   if (values.length < 10) continue;
 
                   const quantities = {};
-                  let col = 9;
+                  let col = 10; // Start after Notes column
                   [...PTMP_MODELS, ...REMOTE_MODELS].forEach(model => {
                     quantities[model.name] = parseInt(values[col] || 0);
                     col++;
@@ -843,6 +1261,8 @@
                     customerName: values[1] || '',
                     productType: values[2] || PRODUCT_TYPES[0],
                     projectType: values[3] || PROJECT_TYPES[0],
+                    trialPurpose: '',
+                    successCriteria: '',
                     status: values[4] || STATUS_OPTIONS[0],
                     shippingDate: values[5] || null,
                     shippingAddress: values[6] || '',
@@ -904,6 +1324,8 @@
               customerName: '',
               productType: PRODUCT_TYPES[0],
               projectType: PROJECT_TYPES[0],
+              trialPurpose: '',
+              successCriteria: '',
               quantities: emptyQuantities,
               status: STATUS_OPTIONS[0],
               shippingDate: '',
@@ -1329,6 +1751,21 @@
                           h('div', { className: 'kanban-card-days' }, 
                             `${days[status] || 0} days in status`
                           ),
+                          project.trialPurpose ? h('div', { 
+                            style: { 
+                              marginTop: '0.5rem', 
+                              fontSize: '0.7rem', 
+                              color: '#0066a8',
+                              fontWeight: '500',
+                              borderTop: '1px solid #e5e7eb',
+                              paddingTop: '0.5rem',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              display: '-webkit-box',
+                              WebkitLineClamp: '2',
+                              WebkitBoxOrient: 'vertical'
+                            }
+                          }, `🎯 ${project.trialPurpose}`) : null,
                           project.nextSteps ? h('div', { 
                             style: { 
                               marginTop: '0.5rem', 
@@ -1583,6 +2020,28 @@
                   )
                 ),
                 
+                customer.trialPurpose ? h('div', { className: 'card' },
+                  h('div', { className: 'card-header' },
+                    h('h3', null, '🎯 Trial Purpose')
+                  ),
+                  h('div', { className: 'card-body' },
+                    h('div', { style: { whiteSpace: 'pre-wrap', color: '#004170', lineHeight: '1.6', fontWeight: '500' } }, 
+                      customer.trialPurpose
+                    )
+                  )
+                ) : null,
+                
+                customer.successCriteria ? h('div', { className: 'card' },
+                  h('div', { className: 'card-header' },
+                    h('h3', null, '✓ Success Criteria')
+                  ),
+                  h('div', { className: 'card-body' },
+                    h('div', { style: { whiteSpace: 'pre-wrap', color: '#004170', lineHeight: '1.6', fontWeight: '500' } }, 
+                      customer.successCriteria
+                    )
+                  )
+                ) : null,
+                
                 customer.nextSteps ? h('div', { className: 'card' },
                   h('div', { className: 'card-header' },
                     h('h3', null, '⏭️ Next Steps')
@@ -1784,6 +2243,30 @@
                         )
                       )
                     )
+                  )
+                ),
+                
+                h('div', { className: 'section' },
+                  h('div', { className: 'section-title' }, '🎯 Trial Overview'),
+                  h('div', { className: 'form-group' },
+                    h('label', { className: 'form-label' }, 'Trial Purpose / Opportunity Overview'),
+                    h('textarea', {
+                      className: 'form-control',
+                      rows: 3,
+                      placeholder: 'Describe what the customer is looking to test or achieve with this trial...',
+                      value: formData.trialPurpose || '',
+                      onChange: (e) => updateFormField('trialPurpose', e.target.value)
+                    })
+                  ),
+                  h('div', { className: 'form-group' },
+                    h('label', { className: 'form-label' }, 'Success Criteria'),
+                    h('textarea', {
+                      className: 'form-control',
+                      rows: 3,
+                      placeholder: 'Define what success looks like for this trial (e.g., increase bandwidth by 50% over 30 days, achieve 99% uptime, reduce latency to under 10ms, etc.)...',
+                      value: formData.successCriteria || '',
+                      onChange: (e) => updateFormField('successCriteria', e.target.value)
+                    })
                   )
                 ),
                 
